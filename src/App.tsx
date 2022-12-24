@@ -2,17 +2,18 @@ import React from 'react';
 import './App.css';
 import AddDestination from './components/AddDestination';
 import DisplayDestinations from './components/DisplayDestinations';
-import Box from '@mui/material/Box';
+import {Box, Typography} from '@mui/material';
+import { Destination } from './types';
 
 import mockData from './mock_data';
 
-const destinations = mockData;
-
 function App() {
+  const destinations: Destination[] = mockData;
+  
   return (
     <Box width={"100%"} alignItems={'center'} justifyContent={'center'} textAlign={'center'}>
-      <h1>TripCast</h1>
-      <h2>Plan your next trip</h2>
+      <Typography variant={'h1'}>TripCast</Typography>
+      <Typography variant={'h4'}>The weather, wherever you're going</Typography>
       <AddDestination/>
 
       <DisplayDestinations destinations={destinations} />

@@ -8,4 +8,5 @@ export interface Destination {
         lon: number;
     };
     description: string;
+    date: Date;
 }

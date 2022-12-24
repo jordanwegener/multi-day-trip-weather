@@ -1,5 +1,10 @@
 import { Destination } from "./types";
 
+const d1 = new Date();
+const d2 = new Date(d1.getTime() + 86400000);
+const d3 = new Date(d2.getTime() + 86400000);
+const d4 = new Date(d3.getTime() + 86400000);
+
 const mockData: Destination[] = [
   {
     id: 1,
@@ -8,7 +13,8 @@ const mockData: Destination[] = [
       lat: 48.856614,
       lon: 2.3522219
     },
-    description: ""
+    description: "",
+    date: d1,
   },
   {
     id: 2,
@@ -17,7 +23,8 @@ const mockData: Destination[] = [
       lat: 51.5073509,
       lon: -0.1277583
     },
-    description: ""
+    description: "",
+    date: d2,
   },
   {
     id: 3,
@@ -26,7 +33,8 @@ const mockData: Destination[] = [
       lat: 40.7127753,
       lon: -74.0059728
     },
-    description: ""
+    description: "",
+    date: d3,
   },
   {
     id: 4,
@@ -35,7 +43,8 @@ const mockData: Destination[] = [
       lat: 35.6894875,
       lon: 139.6917064
     },
-    description: ""
+    description: "",
+    date: d4,
   }
 ];
 
