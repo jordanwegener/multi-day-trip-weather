@@ -13,7 +13,7 @@ function App() {
     <Box width={"100%"} alignItems={'center'} justifyContent={'center'} textAlign={'center'}>
       <h1>TripCast</h1>
       <h2>Plan your next trip</h2>
-      <AddDestination />
+      <AddDestination/>
 
       <DisplayDestinations destinations={destinations} />
     </Box>

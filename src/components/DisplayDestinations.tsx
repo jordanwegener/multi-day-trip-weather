@@ -17,25 +17,28 @@ function DisplayDestinations({ destinations }: DisplayDestinationsProps) {
           border={"1px solid black"}
           borderRadius={5}
           margin={"10px auto"}
-          padding={3}
-          width={"50%"}
+          maxWidth={"600px"}
           alignSelf={"center"}
           flexDirection={"row"}
         >
-          <Box borderBottom={'1px solid black'}>
+          <Box borderBottom={"1px solid black"}>
             <h4>Stop {destination.id}</h4>
             <h4>{destination.name}</h4>
             <p>{destination.description}</p>
             <p>latitude: {destination.gpsCoords.lat}</p>
             <p>longitude: {destination.gpsCoords.lon}</p>
           </Box>
-          <Box>
-            <h4>Weather</h4>
-            <p>Weather: placeholder</p>
-            <p>Temperature: placeholder</p>
-            <p>Feels Like: placeholder</p>
-            <p>Wind: placeholder</p>
-            <p>Humidity: placeholder</p>
+          <h4>Weather</h4>
+          <Box display={"flex"} flexDirection={"row"} justifyContent={"center"}>
+            <Box display={'flex'} marginRight={5} flexDirection={'column'}>
+              <p>Weather: placeholder</p>
+              <p>Temperature: placeholder</p>
+              <p>Feels Like: placeholder</p>
+            </Box>
+            <Box>
+              <p>Wind: placeholder</p>
+              <p>Humidity: placeholder</p>
+            </Box>
           </Box>
         </Box>
       ))}
