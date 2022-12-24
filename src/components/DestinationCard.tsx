@@ -14,21 +14,21 @@ function DestinationCard({ destination }: { destination: Destination }) {
       }}
     >
       <Box borderBottom={"1px solid lightgrey"} margin={4}>
-        <Typography>Stop {destination.id}</Typography>
-        <Typography>{destination.name}</Typography>
+        <Typography variant={'h6'}>Stop {destination.id}</Typography>
+        <Typography variant={'h5'}>{destination.name}</Typography>
         <Typography>{destination.description}</Typography>
         <Typography>{destination.date.toLocaleDateString()}</Typography>
       </Box>
-      <h4>Weather</h4>
+      <Typography variant={'h6'}>Weather</Typography>
       <Box display={"flex"} flexDirection={"row"} justifyContent={"center"}>
         <Box display={"flex"} marginRight={5} flexDirection={"column"}>
-          <p>Weather: placeholder</p>
-          <p>Temperature: placeholder</p>
-          <p>Feels Like: placeholder</p>
+          <Typography>Weather: placeholder</Typography>
+          <Typography>Temperature: placeholder</Typography>
+          <Typography>Feels Like: placeholder</Typography>
         </Box>
-        <Box>
-          <p>Wind: placeholder</p>
-          <p>Humidity: placeholder</p>
+        <Box marginBottom={6}>
+          <Typography>Wind: placeholder</Typography>
+          <Typography>Humidity: placeholder</Typography>
         </Box>
       </Box>
     </Card>
