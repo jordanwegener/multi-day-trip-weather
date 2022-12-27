@@ -1,40 +1,58 @@
-import create from 'zustand'
-import { Destination } from './types'
+import create from "zustand";
+import { v4 as uuid } from "uuid";
 
-export type Store = {
-    destinations: Destination[],
-    setDestinations: (destinations: Destination[]) => void,
-    addDestination: (destination: Destination) => void,
-    removeDestination: (id: number) => void,
-    clearDestinations: () => void,
-    dates: {
-        startDate: Date,
-        endDate: Date,
-    },
-    setDates: (dates: { startDate: Date, endDate: Date }) => void
-}
-
-const setDestinations = (destinations: Destination[]) => useStore.setState({ destinations })
-
-const addDestination = (destination: Destination) => useStore.setState(state => ({ destinations: [...state.destinations, destination] }))
-
-const removeDestination = (id: number) => useStore.setState(state => ({ destinations: state.destinations.filter(d => d.id !== id) }))
-
-const clearDestinations = () => useStore.setState({ destinations: [] })
-
-const setDates = (dates: { startDate: Date, endDate: Date }) => useStore.setState({ dates })
-
-export const useStore = create(set => ({
+export const useStore = create<State & Actions>((set) => ({
     destinations: [],
-    setDestinations: setDestinations,
-    addDestination: addDestination,
-    removeDestination: removeDestination,
-    clearDestinations: clearDestinations,
-    dates: {
-        startDate: new Date(),
-        endDate: new Date(new Date().getTime() + 86400000)
-    },
-    setDates: setDates
-}))
+    tempScale: "C",
+    forecasts: new Map<string, { [date: string]: Forecast }>(),
+    addForecast: (
+        coords: { lat: number; lon: number },
+        forecast: { [date: string]: Forecast }
+    ) =>
+        set(({ forecasts }) => ({
+            forecasts: new Map(forecasts).set(
+                `${coords.lat.toFixed(2)},${coords.lon.toFixed(2)}`,
+                forecast
+            ),
+        })),
+    switchTempScale: () =>
+        set(({ tempScale }) => ({
+            tempScale: tempScale === "C" ? "F" : tempScale === "F" ? "K" : "C",
+        })),
+    setDestinations: (destinations: Destination[]) =>
+        set(() => ({ destinations })),
+    addDestination: (destination: Destination) =>
+        set(({ destinations }) => ({
+            destinations: [...destinations, { ...destination, id: uuid() }],
+        })),
+    removeDestination: (destination: Destination | string) =>
+        set(({ destinations }) => ({
+            destinations: destinations.filter(
+                (d) =>
+                    d.id !==
+                    (typeof destination === "string"
+                        ? destination
+                        : destination.id)
+            ),
+        })),
+    clearDestinations: () => ({ destinations: [] }),
+}));
 
-export default useStore
+export default useStore;
+
+type State = {
+    destinations: Destination[];
+    tempScale: "C" | "F" | "K";
+    forecasts: Map<string, { [date: string]: Forecast }>;
+};
+
+type Actions = {
+    switchTempScale: () => void;
+    addDestination: (destination: Destination) => void;
+    addForecast: (
+        coords: { lat: number; lon: number },
+        forecast: { [date: string]: Forecast }
+    ) => void;
+    removeDestination: (destination: Destination) => void;
+    clearDestinations: () => void;
+};
