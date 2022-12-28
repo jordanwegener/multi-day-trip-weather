@@ -41,6 +41,7 @@ function DisplayDestinations() {
                 >
                     My Trip
                 </Typography>
+
                 <Box
                     sx={{
                         overflowY: "auto",

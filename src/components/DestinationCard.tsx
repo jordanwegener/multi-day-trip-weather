@@ -1,7 +1,6 @@
 import {
     AcUnit,
     Delete,
-    DeleteRounded,
     QuestionMark,
     SevereCold,
     Shower,
@@ -13,6 +12,7 @@ import {
 import { Box, Card, IconButton, Typography } from "@mui/material";
 import { useStore } from "../store";
 import { useTempScaler } from "../hooks/useTempScaler";
+import { LoadingSpinner } from "./LoadingSpinner";
 
 function DestinationCard({
     destination,
@@ -57,98 +57,127 @@ function DestinationCard({
                     </Typography>
                 </Box>
 
-                {destination.forecasts.map((forecast) => {
-                    if (forecast === null) return null;
-                    const { icon, label } = interpretWeathercode(
-                        forecast?.weathercode
-                    );
-                    return (
-                        <Box
-                            display={"grid"}
-                            flexDirection={"row"}
-                            justifyContent={"space-between"}
-                            alignItems="center"
-                            gridTemplateColumns={"repeat(4,1fr)"}
-                            paddingTop={2}
-                            paddingBottom={2}
-                            gap={2}
-                            boxSizing="border-box"
-                            width="96%"
-                        >
-                            <Card
-                                elevation={0}
-                                sx={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    justifyContent: "center",
-                                    alignItems: "flex-start",
-                                    gap: 2,
-                                    padding: 2,
-                                    height: "80%",
-                                }}
+                {destination.forecasts.filter((f) => f !== null).length > 0 ? (
+                    destination.forecasts.map((forecast) => {
+                        if (forecast === null) return null;
+                        const { icon, label } = interpretWeathercode(
+                            forecast?.weathercode
+                        );
+                        return (
+                            <Box
+                                display={"grid"}
+                                flexDirection={"row"}
+                                justifyContent={"space-between"}
+                                alignItems="center"
+                                gridTemplateColumns={"repeat(4,1fr)"}
+                                paddingTop={2}
+                                paddingBottom={2}
+                                gap={2}
+                                boxSizing="border-box"
+                                width="96%"
                             >
-                                <Typography variant="h5">
-                                    {dayAt(new Date(forecast.date).getDay())}
-                                    {", "}
-                                    {new Date(forecast.date).toLocaleDateString(
-                                        "en-GB",
-                                        { month: "short", day: "2-digit" }
-                                    )}
-                                </Typography>
-                            </Card>
+                                <Card
+                                    elevation={0}
+                                    sx={{
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        justifyContent: "center",
+                                        alignItems: "flex-start",
+                                        gap: 2,
+                                        padding: 2,
+                                        height: "80%",
+                                    }}
+                                >
+                                    <Typography variant="h5">
+                                        {dayAt(
+                                            new Date(forecast.date).getDay()
+                                        )}
+                                        {", "}
+                                        {new Date(
+                                            forecast.date
+                                        ).toLocaleDateString("en-GB", {
+                                            month: "short",
+                                            day: "2-digit",
+                                        })}
+                                    </Typography>
+                                </Card>
 
-                            <Card
-                                elevation={3}
-                                sx={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    gap: 2,
-                                    padding: 2,
-                                    height: "80%",
-                                }}
-                            >
-                                {icon}
-                                <Typography variant="h5">{label}</Typography>
-                            </Card>
-                            <Card
-                                elevation={3}
-                                sx={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    gap: 2,
-                                    padding: 2,
-                                    height: "80%",
-                                }}
-                            >
-                                <Typography variant="h4" sx={{ color: "#009" }}>
-                                    <TempScaler>{forecast.tempMin}</TempScaler>
-                                </Typography>
-                                <Typography variant="h5">Low</Typography>
-                            </Card>
-                            <Card
-                                elevation={3}
-                                sx={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    gap: 2,
-                                    padding: 2,
-                                    height: "80%",
-                                }}
-                            >
-                                <Typography variant="h4" sx={{ color: "#900" }}>
-                                    <TempScaler>{forecast.tempMax}</TempScaler>
-                                </Typography>
-                                <Typography variant="h5">High</Typography>
-                            </Card>
-                        </Box>
-                    );
-                })}
+                                <Card
+                                    elevation={3}
+                                    sx={{
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        gap: 2,
+                                        padding: 2,
+                                        height: "80%",
+                                    }}
+                                >
+                                    {icon}
+                                    <Typography variant="h5">
+                                        {label}
+                                    </Typography>
+                                </Card>
+                                <Card
+                                    elevation={3}
+                                    sx={{
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        gap: 2,
+                                        padding: 2,
+                                        height: "80%",
+                                    }}
+                                >
+                                    <Typography
+                                        variant="h4"
+                                        sx={{ color: "#009" }}
+                                    >
+                                        <TempScaler>
+                                            {forecast.tempMin}
+                                        </TempScaler>
+                                    </Typography>
+                                    <Typography variant="h5">Low</Typography>
+                                </Card>
+                                <Card
+                                    elevation={3}
+                                    sx={{
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        gap: 2,
+                                        padding: 2,
+                                        height: "80%",
+                                    }}
+                                >
+                                    <Typography
+                                        variant="h4"
+                                        sx={{ color: "#900" }}
+                                    >
+                                        <TempScaler>
+                                            {forecast.tempMax}
+                                        </TempScaler>
+                                    </Typography>
+                                    <Typography variant="h5">High</Typography>
+                                </Card>
+                            </Box>
+                        );
+                    })
+                ) : (
+                    <Box
+                        width="100%"
+                        height="80px"
+                        display="flex"
+                        flexDirection="row"
+                        justifyContent="center"
+                        alignItems="center"
+                    >
+                        <LoadingSpinner />
+                    </Box>
+                )}
             </Box>
             {/* <Typography variant={"h6"}>Weather</Typography>
             <Box
