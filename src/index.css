@@ -15,3 +15,21 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+@keyframes spinner {
+  0% {
+    opacity: 1
+  }
+  20% {
+    opacity: 0
+  }
+  40% {
+    opacity: 1
+  }
+}
+.spinner__line {
+  animation-name: spinner;
+  animation-duration: 1.6s;
+  animation-fill-mode: forwards;
+  animation-iteration-count: infinite;
+  animation-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1)
+}

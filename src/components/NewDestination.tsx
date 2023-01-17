@@ -22,23 +22,26 @@ function NewDestination() {
         null
     );
     const { addDestination } = useStore();
-    const [destination, setDestination] = useState<CreateDestination>({
+    const newDestination = () => ({
         name: "",
         coords: { lat: -1000, lon: -1000 },
         fromDate: null,
         toDate: null,
     });
+    const [destination, setDestination] =
+        useState<CreateDestination>(newDestination);
     console.log(destination);
 
-    const destinationIsValid = useMemo(
-        () =>
-            destination.name.length > 0 &&
-            destination.coords.lat > -200 &&
-            destination.coords.lon > -100 &&
-            destination.fromDate !== null &&
-            destination.toDate !== null,
-        [destination]
-    );
+    const destinationIsValid = useMemo(() => {
+        if (!destination.name.length) return false;
+        if (destination.coords.lat < -90) return false;
+        if (destination.coords.lat > 90) return false;
+        if (destination.coords.lon < -180) return false;
+        if (destination.coords.lon > 180) return false;
+        if (destination.fromDate === null) return false;
+        if (destination.toDate === null) return false;
+        return true;
+    }, [destination]);
 
     return (
         <Card
@@ -117,6 +120,7 @@ function NewDestination() {
                             fromDate: (destination.fromDate as Dayjs).toDate(),
                             toDate: (destination.toDate as Dayjs).toDate(),
                         });
+                        setDestination(newDestination);
                     }
                 }}
                 variant="contained"
