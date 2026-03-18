@@ -20,7 +20,7 @@ function DestinationCard({
 }: {
     destination: DestinationWithData;
 }) {
-    const TempScaler = useTempScaler();
+    const scaleTemp = useTempScaler();
     const { removeDestination } = useStore();
     return (
         <Box
@@ -29,7 +29,7 @@ function DestinationCard({
             }}
         >
             <Box
-                borderBottom={"1px solid #EEE"}
+                borderBottom={"1px solid rgba(255, 255, 255, 0.1)"}
                 paddingTop={3}
                 paddingBottom={3}
             >
@@ -45,7 +45,7 @@ function DestinationCard({
                     <Box display="flex" gap="2" alignItems="center">
                         <IconButton
                             onClick={() => removeDestination(destination)}
-                            sx={{ color: "#000" }}
+                            sx={{ color: "text.secondary", "&:hover": { color: "error.main" } }}
                         >
                             <Delete sx={{ height: "30px", width: "30px" }} />
                         </IconButton>
@@ -94,6 +94,7 @@ function DestinationCard({
                                     width="96%"
                                 >
                                     <Card
+                                        className="sub-glass"
                                         elevation={0}
                                         sx={{
                                             display: "flex",
@@ -103,6 +104,7 @@ function DestinationCard({
                                             gap: 2,
                                             padding: 2,
                                             height: "80%",
+                                            backgroundColor: "transparent",
                                         }}
                                     >
                                         <Typography variant="h5">
@@ -120,7 +122,8 @@ function DestinationCard({
                                     </Card>
 
                                     <Card
-                                        elevation={3}
+                                        className="sub-glass"
+                                        elevation={0}
                                         sx={{
                                             display: "flex",
                                             flexDirection: "column",
@@ -129,6 +132,7 @@ function DestinationCard({
                                             gap: 2,
                                             padding: 2,
                                             height: "80%",
+                                            backgroundColor: "transparent",
                                         }}
                                     >
                                         {icon}
@@ -137,7 +141,8 @@ function DestinationCard({
                                         </Typography>
                                     </Card>
                                     <Card
-                                        elevation={3}
+                                        className="sub-glass"
+                                        elevation={0}
                                         sx={{
                                             display: "flex",
                                             flexDirection: "column",
@@ -146,22 +151,22 @@ function DestinationCard({
                                             gap: 2,
                                             padding: 2,
                                             height: "80%",
+                                            backgroundColor: "transparent",
                                         }}
                                     >
                                         <Typography
                                             variant="h4"
-                                            sx={{ color: "#009" }}
+                                            sx={{ color: "#93c5fd" }}
                                         >
-                                            <TempScaler>
-                                                {forecast.tempMin}
-                                            </TempScaler>
+                                            {scaleTemp(forecast.tempMin)}
                                         </Typography>
                                         <Typography variant="h5">
                                             Low
                                         </Typography>
                                     </Card>
                                     <Card
-                                        elevation={3}
+                                        className="sub-glass"
+                                        elevation={0}
                                         sx={{
                                             display: "flex",
                                             flexDirection: "column",
@@ -170,15 +175,14 @@ function DestinationCard({
                                             gap: 2,
                                             padding: 2,
                                             height: "80%",
+                                            backgroundColor: "transparent",
                                         }}
                                     >
                                         <Typography
                                             variant="h4"
-                                            sx={{ color: "#900" }}
+                                            sx={{ color: "#fca5a5" }}
                                         >
-                                            <TempScaler>
-                                                {forecast.tempMax}
-                                            </TempScaler>
+                                            {scaleTemp(forecast.tempMax)}
                                         </Typography>
                                         <Typography variant="h5">
                                             High

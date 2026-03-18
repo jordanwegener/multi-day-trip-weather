@@ -2,8 +2,6 @@ import React, { useMemo, useState } from "react";
 import { useStore } from "../store";
 import {
     Autocomplete,
-    Box,
-    Button,
     Card,
     IconButton,
     TextField,
@@ -55,7 +53,8 @@ function NewDestination() {
                 width: "80%",
                 height: 150,
                 borderRadius: 3,
-                backgroundColor: "white",
+                backgroundColor: "background.paper",
+                backdropFilter: "blur(12px)",
             }}
         >
             <Typography variant={"h5"}>I'll be in</Typography>
@@ -107,9 +106,7 @@ function NewDestination() {
                 />
             </LocalizationProvider>
 
-            <Button
-                endIcon={<AddCircle />}
-                color="primary"
+            <IconButton
                 disabled={!destinationIsValid}
                 onClick={() => {
                     if (destinationIsValid) {
@@ -123,11 +120,13 @@ function NewDestination() {
                         setDestination(newDestination);
                     }
                 }}
-                variant="contained"
-                sx={{ fontSize: 22 }}
+                sx={{ 
+                    flexShrink: 0,
+                    color: (theme) => theme.palette.mode === 'dark' ? 'text.primary' : 'primary.main'
+                }}
             >
-                Add
-            </Button>
+                <AddCircle sx={{ fontSize: 60 }} />
+            </IconButton>
         </Card>
     );
 }

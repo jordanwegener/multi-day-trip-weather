@@ -14,9 +14,15 @@ export const useGeocoder = () => {
     const [geocodeResults, setGeocodeResults] = useState<
         Map<string, GeocodedPlace[]>
     >(new Map());
+    const [isLoading, setIsLoading] = useState(false);
     const timeoutRef = useRef<NodeJS.Timer | null>(null);
 
     useEffect(() => {
+        if (query.length && !geocodeResults.has(query)) {
+            setIsLoading(true);
+        } else {
+            setIsLoading(false);
+        }
         if (timeoutRef.current) {
             clearTimeout(timeoutRef.current);
         }
@@ -30,45 +36,49 @@ export const useGeocoder = () => {
             fetchPlaceList(query).then((places) => {
                 console.log(places);
                 setGeocodeResults((prev) => new Map(prev).set(query, places));
+                setIsLoading(false);
+            }).catch(() => {
+                setIsLoading(false);
             });
         }, 1000);
-    }, [query]);
 
-    return { query, setQuery, results: geocodeResults.get(query) };
+        return () => {
+            if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        };
+    }, [query, geocodeResults]);
+
+    return { query, setQuery, results: geocodeResults.get(query), isLoading };
 };
 
-const fetchPlaceList: (query: string) => Promise<GeocodedPlace[]> = (
+const fetchPlaceList: (query: string) => Promise<GeocodedPlace[]> = async (
     query: string
 ) => {
-    return new Promise<GeocodedPlace[]>(async (resolve, reject) => {
-        const endpointUri =
-            "https://api.mapbox.com/geocoding/v5/mapbox.places/" +
-            query +
-            ".json?proximity=ip&types=place&access_token=" +
-            process.env.REACT_APP_MAPBOX_API_KEY;
-        const result = await axios.get<{ features: ApiPlace[] }>(endpointUri);
-        if (result.data.features) {
-            const data = result.data.features.map(
-                ({
-                    place_name,
-                    geometry: {
-                        coordinates: [lon, lat],
-                    },
-                }) => ({
+    try {
+        const endpointUri = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=5`;
+        const result = await axios.get<{ results?: ApiPlace[] }>(endpointUri);
+        
+        if (result.data.results) {
+            const data = result.data.results.map((place) => {
+                const parts = [place.name, place.admin1, place.country].filter(Boolean);
+                return {
                     id: uuid(),
-                    label: place_name,
-                    coordinates: { lat, lon },
-                })
-            );
-            resolve(data);
+                    label: parts.join(", "),
+                    coordinates: { lat: place.latitude, lon: place.longitude },
+                };
+            });
+            return data;
         }
-        reject("Dun goof'd");
-    });
+        return [];
+    } catch (e) {
+        console.error("Geocoding failed", e);
+        return [];
+    }
 };
 
 type ApiPlace = {
-    place_name: string;
-    geometry: {
-        coordinates: [number, number];
-    };
+    name: string;
+    latitude: number;
+    longitude: number;
+    admin1?: string;
+    country?: string;
 };

@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useCallback } from "react";
 
 export const TempChart = ({
     tempsMax,
@@ -11,16 +11,20 @@ export const TempChart = ({
     const chartHeight = 100;
     const chartWidth = 1000;
 
+    const safeMax = tempsMax && tempsMax.length > 0 ? tempsMax : [0];
+    const safeMin = tempsMin && tempsMin.length > 0 ? tempsMin : [0];
+
     const [minTemp, maxTemp] = useMemo(
         () => [
-            Math.min(...tempsMax, ...tempsMin),
-            Math.max(...tempsMax, ...tempsMin),
+            Math.min(...safeMax, ...safeMin),
+            Math.max(...safeMax, ...safeMin),
         ],
-        [tempsMax, tempsMin]
+        [safeMax, safeMin]
     );
 
-    const chartPath = (temps: number[]) => {
-        const scale = maxTemp - minTemp;
+    const chartPath = useCallback((temps: number[]) => {
+        if (!temps || temps.length < 2) return "";
+        const scale = maxTemp - minTemp || 1;
         const coords = temps.map((temp, i) => [
             Math.round((chartWidth / (temps.length - 1)) * i),
             chartHeight * 0.05 +
@@ -29,23 +33,25 @@ export const TempChart = ({
         ]);
         const pathArray = [
             `M0,${chartHeight}`,
-            ...coords.map((coord) => `L${coord}`),
+            ...coords.map((coord) => `L${coord[0]},${coord[1]}`),
             `L${coords[coords.length - 1][0]},${chartHeight}`,
         ];
         return pathArray.join(" ");
-    };
+    }, [chartHeight, chartWidth, maxTemp, minTemp]);
 
     const tempsMaxPath = useMemo(
-        () => chartPath(tempsMax),
-        [chartPath, tempsMax]
+        () => chartPath(safeMax),
+        [chartPath, safeMax]
     );
     const tempsMinPath = useMemo(
-        () => chartPath(tempsMin),
-        [chartPath, tempsMin]
+        () => chartPath(safeMin),
+        [chartPath, safeMin]
     );
 
+    const isReady = tempsMax && tempsMin && tempsMax.length >= 2 && tempsMin.length >= 2;
+
     return (
-        <svg viewBox={`0 0 ${chartWidth} ${chartHeight}`} {...props}>
+        <svg viewBox={`0 0 ${chartWidth} ${chartHeight}`} {...props} style={{ visibility: isReady ? "visible" : "hidden", ...props.style }}>
             <defs>
                 <clipPath id="container">
                     <path
@@ -54,28 +60,22 @@ export const TempChart = ({
                 </clipPath>
             </defs>
             <g clipPath="url(#container)">
-                {/* {Array.from(new Array(6).keys()).map((n) => (
-                    <line
-                        strokeWidth="1"
-                        stroke="#EEE"
-                        x1={0}
-                        y1={chartHeight * 0.05 + ((chartHeight * 0.9) / 5) * n}
-                        x2={chartWidth}
-                        y2={chartHeight * 0.05 + ((chartHeight * 0.9) / 5) * n}
+                {tempsMaxPath ? (
+                    <path
+                        stroke="#fca5a5"
+                        strokeWidth="3"
+                        d={tempsMaxPath}
+                        fill="rgba(252, 165, 165, 0.2)"
                     />
-                ))} */}
-                <path
-                    stroke="#FD7"
-                    strokeWidth="2"
-                    d={tempsMaxPath}
-                    fill="#FD73"
-                />
-                <path
-                    stroke="#77F"
-                    strokeWidth="2"
-                    d={tempsMinPath}
-                    fill="#77F3"
-                />
+                ) : null}
+                {tempsMinPath ? (
+                    <path
+                        stroke="#93c5fd"
+                        strokeWidth="3"
+                        d={tempsMinPath}
+                        fill="rgba(147, 197, 253, 0.2)"
+                    />
+                ) : null}
             </g>
         </svg>
     );

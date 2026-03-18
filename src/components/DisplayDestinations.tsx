@@ -9,6 +9,7 @@ function DisplayDestinations() {
     console.log(forecast);
     return (
         <Card
+            className="glass-panel"
             sx={{
                 display: "flex",
                 flexDirection: "column",
@@ -18,8 +19,8 @@ function DisplayDestinations() {
                 width: "80%",
                 margin: "0 auto",
                 gap: 10,
-                borderRadius: 3,
                 minHeight: "150px",
+                backgroundColor: "rgba(30, 41, 59, 0.4)", // Slight override for visual depth
             }}
         >
             <Box
@@ -34,6 +35,7 @@ function DisplayDestinations() {
             >
                 <Typography
                     variant="h4"
+                    className="text-gradient"
                     sx={{
                         width: "100%",
                         textAlign: "center",
@@ -58,7 +60,7 @@ function DisplayDestinations() {
                             />
                         ))
                     ) : (
-                        <Typography variant="h5" color="#888" fontWeight="300">
+                        <Typography variant="h5" color="text.secondary" fontWeight="300">
                             Add a destination to get started
                         </Typography>
                     )}
