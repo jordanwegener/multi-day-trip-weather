@@ -18,8 +18,8 @@ export function Home() {
             }}
         >
             <Header />
-            <DisplayDestinations />
             <AddDestination />
+            <DisplayDestinations />
         </div>
     );
 }
