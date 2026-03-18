@@ -11,8 +11,14 @@ export const TempChart = ({
     const chartHeight = 100;
     const chartWidth = 1000;
 
-    const safeMax = tempsMax && tempsMax.length > 0 ? tempsMax : [0];
-    const safeMin = tempsMin && tempsMin.length > 0 ? tempsMin : [0];
+    const safeMax = useMemo(
+        () => (tempsMax && tempsMax.length > 0 ? tempsMax : [0]),
+        [tempsMax]
+    );
+    const safeMin = useMemo(
+        () => (tempsMin && tempsMin.length > 0 ? tempsMin : [0]),
+        [tempsMin]
+    );
 
     const [minTemp, maxTemp] = useMemo(
         () => [

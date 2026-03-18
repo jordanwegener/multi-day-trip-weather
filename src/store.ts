@@ -19,14 +19,6 @@ const loadTrips = (): Record<string, Destination[]> => {
     }
 };
 
-const loadCurrentTripName = (): string | null => {
-    try {
-        return localStorage.getItem("weather_current_trip");
-    } catch (e) {
-        console.error("Failed to load current trip name", e);
-        return null;
-    }
-};
 
 const saveToLocalStorage = (
     trips: Record<string, Destination[]>,

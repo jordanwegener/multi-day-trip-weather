@@ -1,13 +1,23 @@
-import { Box, Button, IconButton, Typography } from "@mui/material";
-import { LightMode, DarkMode } from "@mui/icons-material";
-import { useMemo } from "react";
+import { Box, Button, IconButton, Typography, Tooltip } from "@mui/material";
+import { LightMode, DarkMode, InfoOutlined as InfoIcon } from "@mui/icons-material";
+import { useMemo, useState, useEffect } from "react";
 import useStore from "../store";
 
 import { TripPersistenceControls } from "./TripPersistenceControls";
+import { HelpModal } from "./HelpModal";
 
 export const Header = () => {
     const { tempScale, switchTempScale, colorMode, toggleColorMode } = useStore();
     const tagline = useMemo(generateTagline, []);
+    const [isHelpOpen, setIsHelpOpen] = useState(false);
+
+    useEffect(() => {
+        const hasSeenHelp = localStorage.getItem("tripcast_help_seen");
+        if (!hasSeenHelp) {
+            setIsHelpOpen(true);
+            localStorage.setItem("tripcast_help_seen", "true");
+        }
+    }, []);
     return (
         <Box
             className="glass-panel"
@@ -40,6 +50,11 @@ export const Header = () => {
                 </Typography>
             </Box>
             <Box display={"flex"} gap={2} alignItems={"center"}>
+                <Tooltip title="How to use Tripcast">
+                    <IconButton onClick={() => setIsHelpOpen(true)} color="primary" sx={{ border: "2px solid", borderColor: "divider" }}>
+                        <InfoIcon />
+                    </IconButton>
+                </Tooltip>
                 <IconButton onClick={toggleColorMode} color="inherit" sx={{ border: "2px solid", borderColor: "divider" }}>
                     {colorMode === "dark" ? <LightMode /> : <DarkMode />}
                 </IconButton>
@@ -59,6 +74,7 @@ export const Header = () => {
                     <span style={{ fontWeight: 600 }}>°{tempScale}</span>
                 </Button>
             </Box>
+            <HelpModal open={isHelpOpen} onClose={() => setIsHelpOpen(false)} />
         </Box>
     );
 };
