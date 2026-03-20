@@ -23,7 +23,7 @@ function DestinationCard({
     destination: DestinationWithData;
 }) {
     const scaleTemp = useTempScaler();
-    const { removeDestination, setEditingDestinationId, updateDestination } = useStore();
+    const { removeDestination, setEditingDestinationId, updateDestination, colorMode } = useStore();
     const [noteText, setNoteText] = useState(destination.notes || "");
 
     useEffect(() => {
@@ -37,7 +37,8 @@ function DestinationCard({
             }}
         >
             <Box
-                borderBottom={"1px solid rgba(255, 255, 255, 0.1)"}
+                borderBottom={"1px solid"}
+                borderColor="divider"
                 paddingTop={3}
                 paddingBottom={3}
             >
@@ -237,8 +238,11 @@ function DestinationCard({
                         }
                     }}
                     sx={{
-                        backgroundColor: "rgba(30, 41, 59, 0.4)",
+                        bgcolor: colorMode === "dark" ? "rgba(30, 41, 59, 0.4)" : "background.paper",
                         borderRadius: 2,
+                        "& .MuiOutlinedInput-notchedOutline": {
+                            borderColor: colorMode === "dark" ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)",
+                        }
                     }}
                 />
             </Box>

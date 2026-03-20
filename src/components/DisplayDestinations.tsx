@@ -2,14 +2,16 @@ import { Box, Card, Typography } from "@mui/material";
 import DestinationCard from "./DestinationCard";
 import { useForecast } from "../hooks/useForecast";
 import useStore from "../store";
+import TripSummary from "./TripSummary";
 
 function DisplayDestinations() {
-    const { destinations } = useStore();
+    const { destinations, colorMode } = useStore();
     const forecast = useForecast(destinations);
     console.log(forecast);
     return (
         <Card
-            className="glass-panel"
+            elevation={colorMode === "dark" ? 0 : 4}
+            className={colorMode === "dark" ? "glass-panel" : ""}
             sx={{
                 display: "flex",
                 flexDirection: "column",
@@ -20,7 +22,7 @@ function DisplayDestinations() {
                 margin: "0 auto",
                 gap: { xs: 5, md: 10 },
                 minHeight: "150px",
-                backgroundColor: "rgba(30, 41, 59, 0.4)", // Slight override for visual depth
+                bgcolor: "background.paper",
             }}
         >
             <Box
@@ -43,6 +45,8 @@ function DisplayDestinations() {
                 >
                     My Trip
                 </Typography>
+
+                {forecast.length > 0 && <TripSummary forecast={forecast} />}
 
                 <Box
                     sx={{

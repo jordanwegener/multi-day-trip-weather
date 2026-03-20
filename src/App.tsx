@@ -51,7 +51,7 @@ function App() {
             },
             background: {
                 default: colorMode === "dark" ? "#0f172a" : "#f1f5f9",
-                paper: colorMode === "dark" ? "rgba(30, 41, 59, 0.7)" : "rgba(255, 255, 255, 0.7)",
+                paper: colorMode === "dark" ? "rgba(30, 41, 59, 0.7)" : "#ffffff",
             },
             text: {
                 primary: colorMode === "dark" ? "#f8fafc" : "#0f172a",

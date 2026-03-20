@@ -20,7 +20,7 @@ function NewDestination() {
     const [selectedPlace, setSelectedPlace] = useState<GeocodedPlace | null>(
         null
     );
-    const { addDestination, updateDestination, editingDestinationId, setEditingDestinationId, destinations } = useStore();
+    const { addDestination, updateDestination, editingDestinationId, setEditingDestinationId, destinations, colorMode } = useStore();
     const newDestination = () => ({
         name: "",
         coords: { lat: -1000, lon: -1000 },
@@ -70,7 +70,8 @@ function NewDestination() {
 
     return (
         <Card
-            elevation={5}
+            elevation={colorMode === "dark" ? 0 : 4}
+            className={colorMode === "dark" ? "glass-panel" : ""}
             sx={{
                 display: "flex",
                 flexDirection: { xs: "column", md: "row" },
@@ -82,8 +83,8 @@ function NewDestination() {
                 minHeight: 150,
                 borderRadius: 3,
                 boxSizing: "border-box",
-                backgroundColor: "background.paper",
-                backdropFilter: "blur(12px)",
+                bgcolor: "background.paper",
+                backdropFilter: colorMode === "dark" ? "blur(12px)" : "none",
             }}
         >
             <Typography variant={"h5"}>I'll be in</Typography>
@@ -146,11 +147,13 @@ function NewDestination() {
                 disabled={!destinationIsValid}
                 onClick={() => {
                     if (destinationIsValid) {
+                        const fromDate = (destination.fromDate as Dayjs).toDate();
+                        const toDate = (destination.toDate as Dayjs).toDate();
                         const destinationData = {
                             name: destination.name,
                             coords: destination.coords,
-                            fromDate: (destination.fromDate as Dayjs).toDate(),
-                            toDate: (destination.toDate as Dayjs).toDate(),
+                            fromDate,
+                            toDate,
                         };
                         
                         if (editingDestinationId) {
@@ -163,7 +166,13 @@ function NewDestination() {
                             });
                         }
                         
-                        setDestination(newDestination());
+                        // Set next destination's fromDate to the day after the current toDate
+                        const nextDay = dayjs(toDate).add(1, "day");
+                        setDestination({
+                            ...newDestination(),
+                            fromDate: nextDay,
+                            toDate: nextDay
+                        });
                         setQuery("");
                         setSelectedPlace(null);
                     }
