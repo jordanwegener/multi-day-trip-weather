@@ -10,16 +10,17 @@ import {
 import { useGeocoder } from "../hooks/useGeocoder";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { AddCircle } from "@mui/icons-material";
+import { AddCircle, Edit, Cancel } from "@mui/icons-material";
 import { v4 as uuid } from "uuid";
-import { Dayjs } from "dayjs";
+import { useEffect } from "react";
+import dayjs, { Dayjs } from "dayjs";
 
 function NewDestination() {
     const { query, setQuery, results } = useGeocoder();
     const [selectedPlace, setSelectedPlace] = useState<GeocodedPlace | null>(
         null
     );
-    const { addDestination } = useStore();
+    const { addDestination, updateDestination, editingDestinationId, setEditingDestinationId, destinations } = useStore();
     const newDestination = () => ({
         name: "",
         coords: { lat: -1000, lon: -1000 },
@@ -28,7 +29,33 @@ function NewDestination() {
     });
     const [destination, setDestination] =
         useState<CreateDestination>(newDestination);
-    console.log(destination);
+
+    useEffect(() => {
+        if (editingDestinationId) {
+            const toEdit = destinations.find(d => d.id === editingDestinationId);
+            if (toEdit) {
+                setDestination({
+                    name: toEdit.name,
+                    coords: toEdit.coords,
+                    fromDate: dayjs(toEdit.fromDate),
+                    toDate: dayjs(toEdit.toDate)
+                });
+                setQuery(toEdit.name);
+                setSelectedPlace({
+                    id: toEdit.id,
+                    label: toEdit.name,
+                    coordinates: toEdit.coords
+                });
+            }
+        }
+    }, [editingDestinationId, destinations, setQuery]);
+
+    const handleCancelEdit = () => {
+        setEditingDestinationId(null);
+        setDestination(newDestination());
+        setQuery("");
+        setSelectedPlace(null);
+    };
 
     const destinationIsValid = useMemo(() => {
         if (!destination.name.length) return false;
@@ -86,9 +113,14 @@ function NewDestination() {
                 <DatePicker
                     label="DD/MM/YYYY"
                     inputFormat="DD/MM/YYYY"
+                    disablePast
                     value={destination.fromDate}
                     onChange={(val) =>
-                        setDestination((prev) => ({ ...prev, fromDate: val }))
+                        setDestination((prev) => ({ 
+                            ...prev, 
+                            fromDate: val,
+                            toDate: prev.toDate === null || prev.toDate.isBefore(val) ? val : prev.toDate 
+                        }))
                     }
                     renderInput={(params) => <TextField {...params} sx={{ width: { xs: "100%", md: "auto" } }} />}
                 />
@@ -100,6 +132,8 @@ function NewDestination() {
                 <DatePicker
                     label="DD/MM/YYYY"
                     inputFormat="DD/MM/YYYY"
+                    disablePast
+                    minDate={destination.fromDate || undefined}
                     value={destination.toDate}
                     onChange={(val) =>
                         setDestination((prev) => ({ ...prev, toDate: val }))
@@ -112,14 +146,26 @@ function NewDestination() {
                 disabled={!destinationIsValid}
                 onClick={() => {
                     if (destinationIsValid) {
-                        addDestination({
-                            id: uuid(),
+                        const destinationData = {
                             name: destination.name,
                             coords: destination.coords,
                             fromDate: (destination.fromDate as Dayjs).toDate(),
                             toDate: (destination.toDate as Dayjs).toDate(),
-                        });
-                        setDestination(newDestination);
+                        };
+                        
+                        if (editingDestinationId) {
+                            updateDestination(editingDestinationId, destinationData);
+                            setEditingDestinationId(null);
+                        } else {
+                            addDestination({
+                                id: uuid(),
+                                ...destinationData
+                            });
+                        }
+                        
+                        setDestination(newDestination());
+                        setQuery("");
+                        setSelectedPlace(null);
                     }
                 }}
                 sx={{ 
@@ -127,8 +173,17 @@ function NewDestination() {
                     color: (theme) => theme.palette.mode === 'dark' ? 'text.primary' : 'primary.main'
                 }}
             >
-                <AddCircle sx={{ fontSize: 60 }} />
+                {editingDestinationId ? <Edit sx={{ fontSize: 60 }} /> : <AddCircle sx={{ fontSize: 60 }} />}
             </IconButton>
+            
+            {editingDestinationId && (
+                <IconButton 
+                    onClick={handleCancelEdit}
+                    sx={{ color: "error.main", flexShrink: 0 }}
+                >
+                    <Cancel sx={{ fontSize: 60 }} />
+                </IconButton>
+            )}
         </Card>
     );
 }

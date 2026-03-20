@@ -80,20 +80,36 @@ export const Header = () => {
     );
 };
 
+const TAGLINES = [
+    "the weather, wherever you're going",
+    "always take the weather with you",
+    "now with 100% more weather",
+    "weather, whether here or there",
+    "Sunny'); DROP TABLE users;--",
+    "because packing for three climates is hard enough",
+    "your road trip's third wheel",
+    "for when your itinerary has commitment issues",
+    "predicting rain from point A to point Z",
+    "four cities, three climates, one suitcase",
+    "every stop on your map, weather included",
+    "we can't fix the traffic, but we can warn you about the hail",
+    "the only thing changing faster than the scenery is the forecast",
+    "helping you realize you packed the wrong jacket for stop 3",
+    "your multi-city tour guide to meteorological disappointment",
+    "from departure to destination, with all the clouds in between",
+    "because mother nature doesn't care about your travel plans",
+    "a forecast for every pit stop, detour, and turn around",
+    "letting you know exactly when the road trip turns into a boat trip",
+    "tracking the sun (or lack thereof) across your entire route",
+    "so you know which layover requires an umbrella",
+    "we check the weather so you can just drive",
+    "whether you're flying, driving, or just clicking around the map",
+    "seven stops, zero surprises... well, weather-wise at least",
+    "the ultimate spoiler alert for your entire vacation",
+    "we predict you'll still pack too many socks",
+    "we also don't know what 'partly sunny' actually means",
+];
+
 function generateTagline() {
-    const dice = Math.floor(Math.random() * 5);
-    switch (dice) {
-        case 0:
-            return "the weather, wherever you're going";
-        case 1:
-            return "always take the weather with you";
-        case 2:
-            return "now with 100% more weather";
-        case 3:
-            return "weather, whether here or there";
-        case 4:
-            return "Sunny'); DROP TABLE users;--";
-        default:
-            return "the weather, wherever you're going";
-    }
+    return TAGLINES[Math.floor(Math.random() * TAGLINES.length)];
 }

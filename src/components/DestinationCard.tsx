@@ -1,6 +1,7 @@
 import {
     AcUnit,
     Delete,
+    Edit,
     QuestionMark,
     SevereCold,
     Shower,
@@ -21,7 +22,7 @@ function DestinationCard({
     destination: DestinationWithData;
 }) {
     const scaleTemp = useTempScaler();
-    const { removeDestination } = useStore();
+    const { removeDestination, setEditingDestinationId } = useStore();
     return (
         <Box
             sx={{
@@ -49,6 +50,12 @@ function DestinationCard({
                             sx={{ color: "text.secondary", "&:hover": { color: "error.main" } }}
                         >
                             <Delete sx={{ height: "30px", width: "30px" }} />
+                        </IconButton>
+                        <IconButton
+                            onClick={() => setEditingDestinationId(destination.id)}
+                            sx={{ color: "text.secondary", "&:hover": { color: "primary.main" } }}
+                        >
+                            <Edit sx={{ height: "30px", width: "30px" }} />
                         </IconButton>
                         <Typography
                             variant={"h5"}

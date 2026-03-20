@@ -44,6 +44,8 @@ export const useStore = create<State & Actions>((set) => ({
     currentTripName: null,
     tempScale: "C",
     colorMode: "dark",
+    editingDestinationId: null,
+    setEditingDestinationId: (id) => set({ editingDestinationId: id }),
     toggleColorMode: () => set((state) => ({ colorMode: state.colorMode === "light" ? "dark" : "light" })),
     forecasts: new Map<string, { [date: string]: Forecast }>(),
     addForecast: (
@@ -73,6 +75,18 @@ export const useStore = create<State & Actions>((set) => ({
     addDestination: (destination: Destination) =>
         set((state) => {
             const newDestinations = [...state.destinations, { ...destination, id: uuid() }];
+            if (state.currentTripName) {
+                const updatedTrips = { ...state.trips, [state.currentTripName]: newDestinations };
+                saveToLocalStorage(updatedTrips, state.currentTripName);
+                return { destinations: newDestinations, trips: updatedTrips };
+            }
+            return { destinations: newDestinations };
+        }),
+    updateDestination: (id: string, updatedDest: Partial<Destination>) =>
+        set((state) => {
+            const newDestinations = state.destinations.map(d =>
+                d.id === id ? { ...d, ...updatedDest } as Destination : d
+            );
             if (state.currentTripName) {
                 const updatedTrips = { ...state.trips, [state.currentTripName]: newDestinations };
                 saveToLocalStorage(updatedTrips, state.currentTripName);
@@ -145,6 +159,7 @@ type State = {
     currentTripName: string | null;
     tempScale: "C" | "F" | "K";
     colorMode: "light" | "dark";
+    editingDestinationId: string | null;
     forecasts: Map<string, { [date: string]: Forecast }>;
 };
 
@@ -152,6 +167,8 @@ type Actions = {
     switchTempScale: () => void;
     toggleColorMode: () => void;
     addDestination: (destination: Destination) => void;
+    updateDestination: (id: string, destination: Partial<Destination>) => void;
+    setEditingDestinationId: (id: string | null) => void;
     addForecast: (
         coords: { lat: number; lon: number },
         forecast: { [date: string]: Forecast }
