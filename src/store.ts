@@ -37,16 +37,21 @@ const saveToLocalStorage = (
 };
 
 const initialTrips = loadTrips();
+const initialTheme = (localStorage.getItem("tripcast_theme") as "light" | "dark") || "dark";
 
 export const useStore = create<State & Actions>((set) => ({
     destinations: [],
     trips: initialTrips,
     currentTripName: null,
     tempScale: "C",
-    colorMode: "dark",
+    colorMode: initialTheme,
     editingDestinationId: null,
     setEditingDestinationId: (id) => set({ editingDestinationId: id }),
-    toggleColorMode: () => set((state) => ({ colorMode: state.colorMode === "light" ? "dark" : "light" })),
+    toggleColorMode: () => set((state) => {
+        const newMode = state.colorMode === "light" ? "dark" : "light";
+        localStorage.setItem("tripcast_theme", newMode);
+        return { colorMode: newMode };
+    }),
     forecasts: new Map<string, { [date: string]: Forecast }>(),
     addForecast: (
         coords: { lat: number; lon: number },
