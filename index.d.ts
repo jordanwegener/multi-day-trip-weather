@@ -7,6 +7,7 @@ declare type Destination = {
     };
     fromDate: Date;
     toDate: Date;
+    notes?: string;
 };
 
 declare type DestinationWithData = Destination & {

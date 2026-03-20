@@ -10,7 +10,8 @@ import {
     WbCloudy,
     WbSunny,
 } from "@mui/icons-material";
-import { Box, Card, IconButton, Typography } from "@mui/material";
+import { Box, Card, IconButton, Typography, TextField } from "@mui/material";
+import { useState, useEffect } from "react";
 import { useStore } from "../store";
 import { useTempScaler } from "../hooks/useTempScaler";
 import { LoadingSpinner } from "./LoadingSpinner";
@@ -22,7 +23,13 @@ function DestinationCard({
     destination: DestinationWithData;
 }) {
     const scaleTemp = useTempScaler();
-    const { removeDestination, setEditingDestinationId } = useStore();
+    const { removeDestination, setEditingDestinationId, updateDestination } = useStore();
+    const [noteText, setNoteText] = useState(destination.notes || "");
+
+    useEffect(() => {
+        setNoteText(destination.notes || "");
+    }, [destination.notes]);
+
     return (
         <Box
             sx={{
@@ -213,22 +220,28 @@ function DestinationCard({
                     </Box>
                 )}
             </Box>
-            {/* <Typography variant={"h6"}>Weather</Typography>
-            <Box
-                display={"flex"}
-                flexDirection={"row"}
-                justifyContent={"center"}
-            >
-                <Box
-                    display={"flex"}
-                    marginRight={5}
-                    flexDirection={"column"}
-                ></Box>
-                 <Box marginBottom={6}>
-                    <Typography>Wind: placeholder</Typography>
-                    <Typography>Humidity: placeholder</Typography>
-                </Box> 
-            </Box> */}
+            
+            <Box padding={2} paddingBottom={4} width="96%" boxSizing="border-box">
+                <Typography variant={"h6"} sx={{ marginBottom: 1, color: "text.secondary" }}>Notes</Typography>
+                <TextField
+                    fullWidth
+                    multiline
+                    minRows={2}
+                    variant="outlined"
+                    placeholder="Add notes for your trip... e.g., packing list, flight info"
+                    value={noteText}
+                    onChange={(e) => setNoteText(e.target.value)}
+                    onBlur={() => {
+                        if (noteText !== (destination.notes || "")) {
+                            updateDestination(destination.id, { notes: noteText });
+                        }
+                    }}
+                    sx={{
+                        backgroundColor: "rgba(30, 41, 59, 0.4)",
+                        borderRadius: 2,
+                    }}
+                />
+            </Box>
         </Box>
     );
 }
