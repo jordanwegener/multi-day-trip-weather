@@ -8,7 +8,7 @@ import {
     Typography,
 } from "@mui/material";
 import { useGeocoder } from "../hooks/useGeocoder";
-import { LocalizationProvider, DesktopDatePicker } from "@mui/x-date-pickers";
+import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { AddCircle } from "@mui/icons-material";
 import { v4 as uuid } from "uuid";
@@ -46,20 +46,22 @@ function NewDestination() {
             elevation={5}
             sx={{
                 display: "flex",
-                flexDirection: "row",
+                flexDirection: { xs: "column", md: "row" },
                 justifyContent: "center",
                 alignItems: "center",
-                gap: 5,
-                width: "80%",
-                height: 150,
+                gap: { xs: 2, md: 5 },
+                padding: { xs: 3, md: 0 },
+                width: { xs: "95%", sm: "90%", md: "80%" },
+                minHeight: 150,
                 borderRadius: 3,
+                boxSizing: "border-box",
                 backgroundColor: "background.paper",
                 backdropFilter: "blur(12px)",
             }}
         >
             <Typography variant={"h5"}>I'll be in</Typography>
             <Autocomplete
-                sx={{ width: "20%" }}
+                sx={{ width: { xs: "100%", md: "20%" } }}
                 options={results || []}
                 onInputChange={(_, value) => setQuery(value)}
                 placeholder="Search for destination..."
@@ -81,28 +83,28 @@ function NewDestination() {
             <Typography variant={"h5"}>from</Typography>
 
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DesktopDatePicker
+                <DatePicker
                     label="DD/MM/YYYY"
                     inputFormat="DD/MM/YYYY"
                     value={destination.fromDate}
                     onChange={(val) =>
                         setDestination((prev) => ({ ...prev, fromDate: val }))
                     }
-                    renderInput={(params) => <TextField {...params} />}
+                    renderInput={(params) => <TextField {...params} sx={{ width: { xs: "100%", md: "auto" } }} />}
                 />
             </LocalizationProvider>
 
             <Typography variant={"h5"}>until</Typography>
 
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DesktopDatePicker
+                <DatePicker
                     label="DD/MM/YYYY"
                     inputFormat="DD/MM/YYYY"
                     value={destination.toDate}
                     onChange={(val) =>
                         setDestination((prev) => ({ ...prev, toDate: val }))
                     }
-                    renderInput={(params) => <TextField {...params} />}
+                    renderInput={(params) => <TextField {...params} sx={{ width: { xs: "100%", md: "auto" } }} />}
                 />
             </LocalizationProvider>
 
