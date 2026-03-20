@@ -16,9 +16,9 @@ function DisplayDestinations() {
                 justifyContent: "center",
                 alignItems: "center",
                 maxWidth: "2500px",
-                width: "80%",
+                width: { xs: "95%", sm: "90%", md: "80%" },
                 margin: "0 auto",
-                gap: 10,
+                gap: { xs: 5, md: 10 },
                 minHeight: "150px",
                 backgroundColor: "rgba(30, 41, 59, 0.4)", // Slight override for visual depth
             }}

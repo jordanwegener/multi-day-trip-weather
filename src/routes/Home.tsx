@@ -1,11 +1,12 @@
+import { Box } from "@mui/material";
 import AddDestination from "../components/NewDestination";
 import DisplayDestinations from "../components/DisplayDestinations";
 import { Header } from "../components/Header";
 
 export function Home() {
     return (
-        <div
-            style={{
+        <Box
+            sx={{
                 display: "flex",
                 flexDirection: "column",
                 width: "100vw",
@@ -13,13 +14,13 @@ export function Home() {
                 paddingBottom: "50px",
                 justifyContent: "flex-start",
                 alignItems: "center",
-                gap: 50,
+                gap: { xs: 4, md: 6 },
                 boxSizing: "border-box",
             }}
         >
             <Header />
             <AddDestination />
             <DisplayDestinations />
-        </div>
+        </Box>
     );
 }

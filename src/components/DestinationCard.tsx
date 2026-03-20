@@ -35,9 +35,10 @@ function DestinationCard({
             >
                 <Box
                     display="flex"
+                    flexDirection={{ xs: "column", md: "row" }}
                     justifyContent="space-between"
-                    alignItems="center"
-                    height={40}
+                    alignItems={{ xs: "flex-start", md: "center" }}
+                    minHeight={40}
                     gap={2}
                     marginBottom={3}
                     width="96%"
@@ -86,12 +87,12 @@ function DestinationCard({
                                     flexDirection={"row"}
                                     justifyContent={"space-between"}
                                     alignItems="center"
-                                    gridTemplateColumns={"repeat(4,1fr)"}
+                                    gridTemplateColumns={{ xs: "repeat(2,1fr)", sm: "repeat(4,1fr)" }}
                                     paddingTop={2}
                                     paddingBottom={2}
                                     gap={2}
                                     boxSizing="border-box"
-                                    width="96%"
+                                    width="100%"
                                 >
                                     <Card
                                         className="sub-glass"
