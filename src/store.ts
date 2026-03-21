@@ -37,7 +37,7 @@ const saveToLocalStorage = (
 };
 
 const initialTrips = loadTrips();
-const initialTheme = (localStorage.getItem("tripcast_theme") as "light" | "dark") || "dark";
+const initialTheme = (localStorage.getItem("tripcast_theme") as "light" | "dark") || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
 
 export const useStore = create<State & Actions>((set) => ({
     destinations: [],

@@ -21,6 +21,10 @@ function App() {
 
     useEffect(() => {
         const root = document.documentElement;
+        // This is a crucial property for extensions like Night Eye/Dark Reader
+        // to understand our site supports both modes and which one is active.
+        root.style.colorScheme = colorMode;
+
         if (colorMode === "light") {
             root.style.setProperty("--primary", "#4338ca"); // Darker Indigo
             root.style.setProperty("--secondary", "#7e22ce"); // Darker Purple
@@ -39,6 +43,28 @@ function App() {
             root.style.setProperty("--text-muted", "#94a3b8");
         }
     }, [colorMode]);
+
+    // Update color mode if system preference changes and user hasn't set an override
+    useEffect(() => {
+        const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+        const handleChange = (e: MediaQueryListEvent) => {
+            const hasUserPreference = localStorage.getItem("tripcast_theme");
+            if (!hasUserPreference) {
+                // If the user hasn't explicitly set a theme, follow the system
+                const { colorMode: currentMode, toggleColorMode } = useStore.getState();
+                const newSystemMode = e.matches ? "dark" : "light";
+                if (currentMode !== newSystemMode) {
+                   // We don't use toggleColorMode here because it saves to localStorage
+                   // We might want a 'setColorMode' action if we want to follow system exactly.
+                   // For now, let's just use the store's set method directly or add an action.
+                   useStore.setState({ colorMode: newSystemMode });
+                }
+            }
+        };
+
+        mediaQuery.addEventListener("change", handleChange);
+        return () => mediaQuery.removeEventListener("change", handleChange);
+    }, []);
 
     const theme = useMemo(() => createTheme({
         palette: {
