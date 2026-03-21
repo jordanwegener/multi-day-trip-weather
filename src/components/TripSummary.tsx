@@ -105,8 +105,8 @@ const TripSummary = ({ forecast }: TripSummaryProps) => {
         `);
 
         try {
-            // Small delay to ensure any deferred paints are ready
-            await new Promise(r => setTimeout(r, 200));
+            // Increase delay to ensure fonts are fully recognized in the render context
+            await new Promise(r => setTimeout(r, 500));
 
             const dataUrl = await toPng(fullExportRef.current, {
                 backgroundColor: colorMode === "dark" ? "#0f172a" : "#ffffff",
@@ -247,7 +247,7 @@ const TripSummary = ({ forecast }: TripSummaryProps) => {
                     display: "flex",
                     flexDirection: "column",
                     gap: 4,
-                    fontFamily: "'Inter', sans-serif"
+                    fontFamily: "Inter, sans-serif"
                 }}>
                     <Box>
                         <Typography variant="h4" sx={{ fontWeight: 800, mb: 1 }}>
@@ -298,15 +298,15 @@ const TripSummary = ({ forecast }: TripSummaryProps) => {
                                     }}>
                                         <Box display="flex" justifyContent="space-between" alignItems="flex-start" sx={{ mb: 1 }}>
                                             <Box>
-                                                <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>{d.name}</Typography>
-                                                <Typography variant="caption" sx={{ opacity: 0.7 }}>
+                                                <Typography variant="subtitle1" sx={{ fontWeight: 700, lineHeight: 1.2 }}>{d.name}</Typography>
+                                                <Typography variant="caption" sx={{ opacity: 0.7, lineHeight: 1.2 }}>
                                                     {dayjs(d.fromDate).format("MMM D")} - {dayjs(d.toDate).format("MMM D")}
                                                 </Typography>
                                             </Box>
-                                            <Box sx={{ textAlign: "right" }}>
-                                                <Typography sx={{ fontWeight: 700, color: "#fca5a5" }}>H: {scaleTemp(highest)}</Typography>
-                                                <Typography sx={{ fontWeight: 700, color: "#93c5fd" }}>L: {scaleTemp(lowest)}</Typography>
-                                            </Box>
+                                            <Stack sx={{ textAlign: "right" }} spacing={0.2}>
+                                                <Typography variant="body2" sx={{ fontWeight: 800, color: "#fca5a5", lineHeight: 1 }}>H: {scaleTemp(highest)}</Typography>
+                                                <Typography variant="body2" sx={{ fontWeight: 800, color: "#93c5fd", lineHeight: 1 }}>L: {scaleTemp(lowest)}</Typography>
+                                            </Stack>
                                         </Box>
                                         
                                         <Box sx={{ flex: 1 }}>
