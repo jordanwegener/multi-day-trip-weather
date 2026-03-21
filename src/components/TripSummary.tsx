@@ -113,6 +113,7 @@ const TripSummary = ({ forecast }: TripSummaryProps) => {
                 quality: 1,
                 pixelRatio: 2,
                 cacheBust: true,
+                fontEmbedCSS: "", // Definitive fix for "trim" error in html-to-image
                 style: {
                     margin: "0",
                     padding: "24px",
@@ -238,51 +239,52 @@ const TripSummary = ({ forecast }: TripSummaryProps) => {
             </Stack>
 
             {/* Hidden Export Layout - kept off-screen but active for rendering */}
-            <Box style={{ position: 'fixed', left: '-10000px', top: '0', pointerEvents: 'none', zIndex: -9999 }}>
-                <Box ref={fullExportRef} sx={{ 
+            <div style={{ position: 'fixed', left: '-10000px', top: '0', pointerEvents: 'none', zIndex: -9999 }}>
+                <div ref={fullExportRef} style={{ 
                     width: "800px", 
-                    bgcolor: colorMode === "dark" ? "#0f172a" : "#ffffff",
+                    backgroundColor: colorMode === "dark" ? "#0f172a" : "#ffffff",
                     color: colorMode === "dark" ? "#f8fafc" : "#0f172a",
-                    padding: 4,
+                    padding: "32px",
                     display: "flex",
                     flexDirection: "column",
-                    gap: 4,
-                    fontFamily: "Inter, sans-serif"
+                    gap: "32px",
+                    fontFamily: "Inter, sans-serif",
+                    boxSizing: "border-box"
                 }}>
-                    <Box>
-                        <Typography variant="h4" sx={{ fontWeight: 800, mb: 1 }}>
+                    <div>
+                        <div style={{ fontSize: "32px", fontWeight: 800, marginBottom: "8px", fontFamily: "Outfit, sans-serif" }}>
                             {currentTripName || "Trip Summary"}
-                        </Typography>
-                        <Typography variant="body1" sx={{ opacity: 0.7 }}>
+                        </div>
+                        <div style={{ fontSize: "16px", opacity: 0.7 }}>
                             Multi-day weather forecast summary
-                        </Typography>
-                    </Box>
+                        </div>
+                    </div>
 
-                    <Divider sx={{ opacity: 0.2 }} />
+                    <hr style={{ border: "none", borderTop: "1px solid rgba(128,128,128,0.2)", width: "100%", margin: 0 }} />
 
-                    <Box>
-                        <Typography variant="h6" sx={{ mb: 2, fontWeight: 700 }}>Trip Highlights</Typography>
-                        <Stack direction="row" spacing={4} justifyContent="space-around">
-                            <Box sx={{ textAlign: "center" }}>
-                                <Typography variant="caption" sx={{ opacity: 0.7 }}>Max High</Typography>
-                                <Typography variant="h5" sx={{ fontWeight: 800, color: "#fca5a5" }}>{scaleTemp(stats.highestHigh)}</Typography>
-                            </Box>
-                            <Box sx={{ textAlign: "center" }}>
-                                <Typography variant="caption" sx={{ opacity: 0.7 }}>Min Low</Typography>
-                                <Typography variant="h5" sx={{ fontWeight: 800, color: "#93c5fd" }}>{scaleTemp(stats.lowestLow)}</Typography>
-                            </Box>
-                            <Box sx={{ textAlign: "center" }}>
-                                <Typography variant="caption" sx={{ opacity: 0.7 }}>Precipitation</Typography>
-                                <Typography variant="h5" sx={{ fontWeight: 800, color: "#7dd3fc" }}>{stats.precipDates.size}</Typography>
-                            </Box>
-                        </Stack>
-                    </Box>
+                    <div>
+                        <div style={{ fontSize: "20px", fontWeight: 700, marginBottom: "16px", fontFamily: "Outfit, sans-serif" }}>Trip Highlights</div>
+                        <div style={{ display: "flex", justifyContent: "space-around", width: "100%" }}>
+                            <div style={{ textAlign: "center" }}>
+                                <div style={{ fontSize: "12px", opacity: 0.7, marginBottom: "4px" }}>Max High</div>
+                                <div style={{ fontSize: "24px", fontWeight: 800, color: "#fca5a5" }}>{scaleTemp(stats.highestHigh)}</div>
+                            </div>
+                            <div style={{ textAlign: "center" }}>
+                                <div style={{ fontSize: "12px", opacity: 0.7, marginBottom: "4px" }}>Min Low</div>
+                                <div style={{ fontSize: "24px", fontWeight: 800, color: "#93c5fd" }}>{scaleTemp(stats.lowestLow)}</div>
+                            </div>
+                            <div style={{ textAlign: "center" }}>
+                                <div style={{ fontSize: "12px", opacity: 0.7, marginBottom: "4px" }}>Precipitation</div>
+                                <div style={{ fontSize: "24px", fontWeight: 800, color: "#7dd3fc" }}>{stats.precipDates.size}</div>
+                            </div>
+                        </div>
+                    </div>
 
-                    <Divider sx={{ opacity: 0.2 }} />
+                    <hr style={{ border: "none", borderTop: "1px solid rgba(128,128,128,0.2)", width: "100%", margin: 0 }} />
 
-                    <Box>
-                        <Typography variant="h6" sx={{ mb: 2, fontWeight: 700 }}>Destinations</Typography>
-                        <Stack spacing={3}>
+                    <div>
+                        <div style={{ fontSize: "20px", fontWeight: 700, marginBottom: "16px", fontFamily: "Outfit, sans-serif" }}>Destinations</div>
+                        <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
                             {forecast.map((d) => {
                                 const validForecasts = d.forecasts.filter((f): f is Forecast & { date: string } => f !== null);
                                 const highest = Math.max(...validForecasts.map(f => f.tempMax));
@@ -290,56 +292,56 @@ const TripSummary = ({ forecast }: TripSummaryProps) => {
                                 const weatherCodes = Array.from(new Set(validForecasts.map(f => f.weathercode)));
                                 
                                 return (
-                                    <Box key={d.id} sx={{ 
-                                        padding: 2, 
-                                        borderRadius: 2, 
-                                        bgcolor: colorMode === "dark" ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.02)",
-                                        border: "1px solid rgba(255,255,255,0.1)"
+                                    <div key={d.id} style={{ 
+                                        padding: "16px", 
+                                        borderRadius: "12px", 
+                                        backgroundColor: colorMode === "dark" ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.02)",
+                                        border: "1px solid rgba(128,128,128,0.1)"
                                     }}>
-                                        <Box display="flex" justifyContent="space-between" alignItems="flex-start" sx={{ mb: 1 }}>
-                                            <Box>
-                                                <Typography variant="subtitle1" sx={{ fontWeight: 700, lineHeight: 1.2 }}>{d.name}</Typography>
-                                                <Typography variant="caption" sx={{ opacity: 0.7, lineHeight: 1.2 }}>
+                                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
+                                            <div>
+                                                <div style={{ fontSize: "18px", fontWeight: 700, lineHeight: 1.2 }}>{d.name}</div>
+                                                <div style={{ fontSize: "12px", opacity: 0.7, lineHeight: 1.2 }}>
                                                     {dayjs(d.fromDate).format("MMM D")} - {dayjs(d.toDate).format("MMM D")}
-                                                </Typography>
-                                            </Box>
-                                            <Stack sx={{ textAlign: "right" }} spacing={0.2}>
-                                                <Typography variant="body2" sx={{ fontWeight: 800, color: "#fca5a5", lineHeight: 1 }}>H: {scaleTemp(highest)}</Typography>
-                                                <Typography variant="body2" sx={{ fontWeight: 800, color: "#93c5fd", lineHeight: 1 }}>L: {scaleTemp(lowest)}</Typography>
-                                            </Stack>
-                                        </Box>
+                                                </div>
+                                            </div>
+                                            <div style={{ textAlign: "right", display: "flex", flexDirection: "column", gap: "2px" }}>
+                                                <div style={{ fontSize: "14px", fontWeight: 800, color: "#fca5a5", lineHeight: 1 }}>H: {scaleTemp(highest)}</div>
+                                                <div style={{ fontSize: "14px", fontWeight: 800, color: "#93c5fd", lineHeight: 1 }}>L: {scaleTemp(lowest)}</div>
+                                            </div>
+                                        </div>
                                         
-                                        <Box sx={{ flex: 1 }}>
-                                            <Typography variant="caption" sx={{ fontWeight: 700, mb: 0.5, display: "block", opacity: 0.8 }}>
+                                        <div style={{ flex: 1 }}>
+                                            <div style={{ fontSize: "12px", fontWeight: 700, marginBottom: "4px", opacity: 0.8 }}>
                                                 Weather Summary
-                                            </Typography>
-                                            <Stack direction="row" spacing={1.5} flexWrap="wrap">
+                                            </div>
+                                            <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
                                                 {weatherCodes.map(code => {
                                                     const { icon, label } = interpretWeathercode(code);
                                                     return (
-                                                        <Stack key={code} direction="column" alignItems="center" spacing={0.2} sx={{ minWidth: 45 }}>
-                                                            <Box sx={{ transform: "scale(0.65)", height: 24, width: 24, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                                        <div key={code} style={{ display: "flex", flexDirection: "column", alignItems: "center", minWidth: "45px" }}>
+                                                            <div style={{ transform: "scale(0.65)", height: "24px", width: "24px", display: "flex", alignItems: "center", justifyContent: "center" }}>
                                                                 {icon}
-                                                            </Box>
-                                                            <Typography variant="caption" sx={{ fontSize: "0.6rem", textAlign: "center", opacity: 0.8, lineHeight: 1 }}>
+                                                            </div>
+                                                            <div style={{ fontSize: "9px", textAlign: "center", opacity: 0.8, lineHeight: 1 }}>
                                                                 {label}
-                                                            </Typography>
-                                                        </Stack>
+                                                            </div>
+                                                        </div>
                                                     );
                                                 })}
-                                            </Stack>
-                                        </Box>
-                                    </Box>
+                                            </div>
+                                        </div>
+                                    </div>
                                 );
                             })}
-                        </Stack>
-                    </Box>
+                        </div>
+                    </div>
 
-                    <Typography variant="caption" sx={{ mt: 2, opacity: 0.5, textAlign: "center" }}>
+                    <div style={{ marginTop: "16px", fontSize: "12px", opacity: 0.5, textAlign: "center" }}>
                         Generated by TripCast - tracking the sun (or lack thereof) across your entire route
-                    </Typography>
-                </Box>
-            </Box>
+                    </div>
+                </div>
+            </div>
         </Card>
     );
 };
