@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { Box, Card, Typography, Stack, Divider, IconButton, Tooltip } from "@mui/material";
 import { useTempScaler } from "../hooks/useTempScaler";
-import { Shower, TrendingUp, TrendingDown, ContentCopy, Image as ImageIcon, Check } from "@mui/icons-material";
+import { Shower, TrendingUp, TrendingDown, ContentCopy, OpenInNew, Check } from "@mui/icons-material";
 import { toPng } from "html-to-image";
 import useStore from "../store";
 import dayjs from "dayjs";
@@ -64,7 +64,7 @@ const TripSummary = ({ forecast }: TripSummaryProps) => {
         }
     };
 
-    const handleCopyImage = async () => {
+    const handleOpenImage = async () => {
         if (!fullExportRef.current) return;
 
         try {
@@ -79,19 +79,55 @@ const TripSummary = ({ forecast }: TripSummaryProps) => {
                     width: "800px", // Fixed width for better export consistency
                 }
             });
-            const response = await fetch(dataUrl);
-            const blob = await response.blob();
             
-            await navigator.clipboard.write([
-                new ClipboardItem({
-                    [blob.type]: blob
-                })
-            ]);
-            
+            const newTab = window.open();
+            if (newTab) {
+                newTab.document.write(`
+                    <html>
+                        <head>
+                            <title>${currentTripName || "Trip Summary"}</title>
+                            <style>
+                                body { 
+                                    margin: 0; 
+                                    display: flex; 
+                                    justify-content: center; 
+                                    align-items: center; 
+                                    min-height: 100vh; 
+                                    padding: 20px;
+                                    background-color: ${colorMode === "dark" ? "#0f172a" : "#f1f5f9"}; 
+                                    font-family: sans-serif;
+                                }
+                                img { 
+                                    max-width: 100%; 
+                                    height: auto; 
+                                    border-radius: 12px; 
+                                    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+                                }
+                                .controls {
+                                    position: fixed;
+                                    top: 10px;
+                                    right: 10px;
+                                    color: ${colorMode === "dark" ? "#ffffff" : "#000000"};
+                                    background: rgba(128,128,128,0.2);
+                                    padding: 5px 10px;
+                                    border-radius: 5px;
+                                    font-size: 12px;
+                                }
+                            </style>
+                        </head>
+                        <body>
+                            <div class="controls">Generated Image - Right click to save</div>
+                            <img src="${dataUrl}" alt="Trip Summary" />
+                        </body>
+                    </html>
+                `);
+                newTab.document.close();
+            }
+
             setCopyStatus("image");
             setTimeout(() => setCopyStatus("none"), 2000);
         } catch (err) {
-            console.error("Failed to copy image: ", err);
+            console.error("Failed to open image: ", err);
         }
     };
 
@@ -129,9 +165,9 @@ const TripSummary = ({ forecast }: TripSummaryProps) => {
                             {copyStatus === "text" ? <Check fontSize="small" /> : <ContentCopy fontSize="small" />}
                         </IconButton>
                     </Tooltip>
-                    <Tooltip title={copyStatus === "image" ? "Copied!" : "Copy as Image"}>
-                        <IconButton size="small" onClick={handleCopyImage} sx={{ color: "text.secondary", "&:hover": { color: "primary.main", background: "rgba(0,0,0,0.05)" } }}>
-                            {copyStatus === "image" ? <Check fontSize="small" /> : <ImageIcon fontSize="small" />}
+                    <Tooltip title={copyStatus === "image" ? "Opened!" : "Open as Image"}>
+                        <IconButton size="small" onClick={handleOpenImage} sx={{ color: "text.secondary", "&:hover": { color: "primary.main", background: "rgba(0,0,0,0.05)" } }}>
+                            {copyStatus === "image" ? <Check fontSize="small" /> : <OpenInNew fontSize="small" />}
                         </IconButton>
                     </Tooltip>
                 </Stack>
