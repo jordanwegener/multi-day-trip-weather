@@ -1,10 +1,12 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useMemo } from "react";
 import { Box, Card, Typography, Stack, Divider, IconButton, Tooltip } from "@mui/material";
 import { useTempScaler } from "../hooks/useTempScaler";
-import { Shower, TrendingUp, TrendingDown, ContentCopy, Image, Check } from "@mui/icons-material";
+import { Shower, TrendingUp, TrendingDown, ContentCopy, Image as ImageIcon, Check } from "@mui/icons-material";
 import { toPng } from "html-to-image";
 import useStore from "../store";
 import dayjs from "dayjs";
+import { interpretWeathercode } from "../utils/weatherUtils";
+import { TempChart } from "./TempChart";
 
 interface TripSummaryProps {
     forecast: DestinationWithData[];
@@ -19,6 +21,7 @@ const TripSummary = ({ forecast }: TripSummaryProps) => {
     const scaleTemp = useTempScaler();
     const [copyStatus, setCopyStatus] = useState<"none" | "text" | "image">("none");
     const cardRef = useRef<HTMLDivElement>(null);
+    const fullExportRef = useRef<HTMLDivElement>(null);
 
     const stats = forecast.reduce(
         (acc, dest) => {
@@ -62,16 +65,18 @@ const TripSummary = ({ forecast }: TripSummaryProps) => {
     };
 
     const handleCopyImage = async () => {
-        if (!cardRef.current) return;
+        if (!fullExportRef.current) return;
 
         try {
-            const dataUrl = await toPng(cardRef.current, {
+            const dataUrl = await toPng(fullExportRef.current, {
                 backgroundColor: "transparent",
                 style: {
                     borderRadius: "16px",
                     background: colorMode === "dark" 
-                        ? "rgba(15, 23, 42, 0.95)" 
-                        : "rgba(255, 255, 255, 0.95)",
+                        ? "#0f172a" 
+                        : "#ffffff",
+                    padding: "24px",
+                    width: "800px", // Fixed width for better export consistency
                 }
             });
             const response = await fetch(dataUrl);
@@ -126,7 +131,7 @@ const TripSummary = ({ forecast }: TripSummaryProps) => {
                     </Tooltip>
                     <Tooltip title={copyStatus === "image" ? "Copied!" : "Copy as Image"}>
                         <IconButton size="small" onClick={handleCopyImage} sx={{ color: "text.secondary", "&:hover": { color: "primary.main", background: "rgba(0,0,0,0.05)" } }}>
-                            {copyStatus === "image" ? <Check fontSize="small" /> : <Image fontSize="small" />}
+                            {copyStatus === "image" ? <Check fontSize="small" /> : <ImageIcon fontSize="small" />}
                         </IconButton>
                     </Tooltip>
                 </Stack>
@@ -168,6 +173,110 @@ const TripSummary = ({ forecast }: TripSummaryProps) => {
                     </Typography>
                 </Box>
             </Stack>
+
+            {/* Hidden Export Layout */}
+            <Box style={{ position: 'absolute', top: '-10000px', left: '-10000px' }}>
+                <Box ref={fullExportRef} sx={{ 
+                    width: "800px", 
+                    bgcolor: colorMode === "dark" ? "#0f172a" : "#ffffff",
+                    color: colorMode === "dark" ? "#f8fafc" : "#0f172a",
+                    padding: 4,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 4,
+                    fontFamily: "'Inter', sans-serif"
+                }}>
+                    <Box>
+                        <Typography variant="h4" sx={{ fontWeight: 800, mb: 1 }}>
+                            {currentTripName || "Trip Summary"}
+                        </Typography>
+                        <Typography variant="body1" sx={{ opacity: 0.7 }}>
+                            Multi-day weather forecast summary
+                        </Typography>
+                    </Box>
+
+                    <Divider sx={{ opacity: 0.2 }} />
+
+                    <Box>
+                        <Typography variant="h6" sx={{ mb: 2, fontWeight: 700 }}>Trip Highlights</Typography>
+                        <Stack direction="row" spacing={4} justifyContent="space-around">
+                            <Box sx={{ textAlign: "center" }}>
+                                <Typography variant="caption" sx={{ opacity: 0.7 }}>Max High</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 800, color: "#fca5a5" }}>{scaleTemp(stats.highestHigh)}</Typography>
+                            </Box>
+                            <Box sx={{ textAlign: "center" }}>
+                                <Typography variant="caption" sx={{ opacity: 0.7 }}>Min Low</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 800, color: "#93c5fd" }}>{scaleTemp(stats.lowestLow)}</Typography>
+                            </Box>
+                            <Box sx={{ textAlign: "center" }}>
+                                <Typography variant="caption" sx={{ opacity: 0.7 }}>Rainy Days</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 800, color: "#7dd3fc" }}>{stats.rainyDates.size}</Typography>
+                            </Box>
+                        </Stack>
+                    </Box>
+
+                    <Divider sx={{ opacity: 0.2 }} />
+
+                    <Box>
+                        <Typography variant="h6" sx={{ mb: 2, fontWeight: 700 }}>Destinations</Typography>
+                        <Stack spacing={3}>
+                            {forecast.map((d) => {
+                                const validForecasts = d.forecasts.filter((f): f is Forecast & { date: string } => f !== null);
+                                const highest = Math.max(...validForecasts.map(f => f.tempMax));
+                                const lowest = Math.min(...validForecasts.map(f => f.tempMin));
+                                const weatherCodes = Array.from(new Set(validForecasts.map(f => f.weathercode)));
+                                
+                                return (
+                                    <Box key={d.id} sx={{ 
+                                        padding: 2, 
+                                        borderRadius: 2, 
+                                        bgcolor: colorMode === "dark" ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.02)",
+                                        border: "1px solid rgba(255,255,255,0.1)"
+                                    }}>
+                                        <Box display="flex" justifyContent="space-between" alignItems="flex-start" sx={{ mb: 1 }}>
+                                            <Box>
+                                                <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>{d.name}</Typography>
+                                                <Typography variant="caption" sx={{ opacity: 0.7 }}>
+                                                    {dayjs(d.fromDate).format("MMM D")} - {dayjs(d.toDate).format("MMM D")}
+                                                </Typography>
+                                            </Box>
+                                            <Box sx={{ textAlign: "right" }}>
+                                                <Typography sx={{ fontWeight: 700, color: "#fca5a5" }}>H: {scaleTemp(highest)}</Typography>
+                                                <Typography sx={{ fontWeight: 700, color: "#93c5fd" }}>L: {scaleTemp(lowest)}</Typography>
+                                            </Box>
+                                        </Box>
+                                        
+                                        <Box sx={{ flex: 1 }}>
+                                            <Typography variant="caption" sx={{ fontWeight: 700, mb: 0.5, display: "block", opacity: 0.8 }}>
+                                                Weather Summary
+                                            </Typography>
+                                            <Stack direction="row" spacing={1.5} flexWrap="wrap">
+                                                {weatherCodes.map(code => {
+                                                    const { icon, label } = interpretWeathercode(code);
+                                                    return (
+                                                        <Stack key={code} direction="column" alignItems="center" spacing={0.2} sx={{ minWidth: 45 }}>
+                                                            <Box sx={{ transform: "scale(0.65)", height: 24, width: 24, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                                                {icon}
+                                                            </Box>
+                                                            <Typography variant="caption" sx={{ fontSize: "0.6rem", textAlign: "center", opacity: 0.8, lineHeight: 1 }}>
+                                                                {label}
+                                                            </Typography>
+                                                        </Stack>
+                                                    );
+                                                })}
+                                            </Stack>
+                                        </Box>
+                                    </Box>
+                                );
+                            })}
+                        </Stack>
+                    </Box>
+
+                    <Typography variant="caption" sx={{ mt: 2, opacity: 0.5, textAlign: "center" }}>
+                        Generated by TripCast - tracking the sun (or lack thereof) across your entire route
+                    </Typography>
+                </Box>
+            </Box>
         </Card>
     );
 };
