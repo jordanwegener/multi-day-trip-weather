@@ -1,4 +1,4 @@
-import { useRef, useState, useMemo } from "react";
+import { useRef, useState } from "react";
 import { Box, Card, Typography, Stack, Divider, IconButton, Tooltip } from "@mui/material";
 import { useTempScaler } from "../hooks/useTempScaler";
 import { Shower, TrendingUp, TrendingDown, ContentCopy, Image as ImageIcon, Check } from "@mui/icons-material";
@@ -6,7 +6,7 @@ import { toPng } from "html-to-image";
 import useStore from "../store";
 import dayjs from "dayjs";
 import { interpretWeathercode } from "../utils/weatherUtils";
-import { TempChart } from "./TempChart";
+
 
 interface TripSummaryProps {
     forecast: DestinationWithData[];
