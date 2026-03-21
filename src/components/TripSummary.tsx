@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { Box, Card, Typography, Stack, Divider, IconButton, Tooltip } from "@mui/material";
 import { useTempScaler } from "../hooks/useTempScaler";
-import { Shower, TrendingUp, TrendingDown, ContentCopy, OpenInNew, Check } from "@mui/icons-material";
+import { TrendingUp, TrendingDown, ContentCopy, OpenInNew, Check, Umbrella } from "@mui/icons-material";
 import { toPng } from "html-to-image";
 import useStore from "../store";
 import dayjs from "dayjs";
@@ -12,8 +12,8 @@ interface TripSummaryProps {
     forecast: DestinationWithData[];
 }
 
-const RAIN_CODES = new Set([
-    51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82, 95, 96, 99
+const PRECIPITATION_CODES = new Set([
+    51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 71, 73, 75, 77, 80, 81, 82, 85, 86, 95, 96, 99
 ]);
 
 const TripSummary = ({ forecast }: TripSummaryProps) => {
@@ -29,8 +29,8 @@ const TripSummary = ({ forecast }: TripSummaryProps) => {
                 if (f) {
                     acc.highestHigh = Math.max(acc.highestHigh, f.tempMax);
                     acc.lowestLow = Math.min(acc.lowestLow, f.tempMin);
-                    if (RAIN_CODES.has(f.weathercode)) {
-                        acc.rainyDates.add(f.date);
+                    if (PRECIPITATION_CODES.has(f.weathercode)) {
+                        acc.precipDates.add(f.date);
                     }
                 }
             });
@@ -39,7 +39,7 @@ const TripSummary = ({ forecast }: TripSummaryProps) => {
         {
             highestHigh: -Infinity,
             lowestLow: Infinity,
-            rainyDates: new Set<string>(),
+            precipDates: new Set<string>(),
         }
     );
 
@@ -51,7 +51,7 @@ const TripSummary = ({ forecast }: TripSummaryProps) => {
             return `[${i + 1}] ${d.name} (${dates})\n    ${temps}${d.notes ? `\n    Notes: ${d.notes}` : ""}`;
         }).join("\n---\n");
 
-        const summaryText = `Summary:\n- Highest High: ${scaleTemp(stats.highestHigh)}\n- Lowest Low: ${scaleTemp(stats.lowestLow)}\n- Rainy Days: ${stats.rainyDates.size}\n- Generated via TripCast`;
+        const summaryText = `Summary:\n- Highest High: ${scaleTemp(stats.highestHigh)}\n- Lowest Low: ${scaleTemp(stats.lowestLow)}\n- Precipitation Days: ${stats.precipDates.size}\n- Generated via TripCast`;
 
         const fullText = `${tripTitle}\n\n${destinationsText}\n\n${summaryText}`;
 
@@ -228,11 +228,11 @@ const TripSummary = ({ forecast }: TripSummaryProps) => {
 
                 <Box sx={{ textAlign: "center", flex: 1 }}>
                     <Stack direction="row" alignItems="center" justifyContent="center" spacing={1}>
-                        <Shower sx={{ color: "#7dd3fc" }} />
-                        <Typography variant="body2" color="text.secondary">Rainy Days</Typography>
+                        <Umbrella sx={{ color: "#7dd3fc" }} />
+                        <Typography variant="body2" color="text.secondary">Precipitation</Typography>
                     </Stack>
                     <Typography variant="h4" sx={{ fontWeight: 800, color: "#7dd3fc" }}>
-                        {stats.rainyDates.size}
+                        {stats.precipDates.size}
                     </Typography>
                 </Box>
             </Stack>
@@ -272,8 +272,8 @@ const TripSummary = ({ forecast }: TripSummaryProps) => {
                                 <Typography variant="h5" sx={{ fontWeight: 800, color: "#93c5fd" }}>{scaleTemp(stats.lowestLow)}</Typography>
                             </Box>
                             <Box sx={{ textAlign: "center" }}>
-                                <Typography variant="caption" sx={{ opacity: 0.7 }}>Rainy Days</Typography>
-                                <Typography variant="h5" sx={{ fontWeight: 800, color: "#7dd3fc" }}>{stats.rainyDates.size}</Typography>
+                                <Typography variant="caption" sx={{ opacity: 0.7 }}>Precipitation</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 800, color: "#7dd3fc" }}>{stats.precipDates.size}</Typography>
                             </Box>
                         </Stack>
                     </Box>
