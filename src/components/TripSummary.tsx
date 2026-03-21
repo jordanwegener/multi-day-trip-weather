@@ -241,7 +241,7 @@ const TripSummary = ({ forecast }: TripSummaryProps) => {
             {/* Hidden Export Layout - kept off-screen but active for rendering */}
             <div style={{ position: 'fixed', left: '-10000px', top: '0', pointerEvents: 'none', zIndex: -9999 }}>
                 <div ref={fullExportRef} style={{
-                    width: "800px",
+                    width: "600px",
                     backgroundColor: colorMode === "dark" ? "#0f172a" : "#ffffff",
                     color: colorMode === "dark" ? "#f8fafc" : "#0f172a",
                     padding: "32px",
@@ -305,9 +305,9 @@ const TripSummary = ({ forecast }: TripSummaryProps) => {
                                                     {dayjs(d.fromDate).format("MMM D")} - {dayjs(d.toDate).format("MMM D")}
                                                 </div>
                                             </div>
-                                            <div style={{ textAlign: "right", display: "flex", flexDirection: "column", gap: "4px" }}>
-                                                <div style={{ fontSize: "14px", fontWeight: 800, color: "#fca5a5", lineHeight: "10" }}>H: {scaleTemp(highest)}</div>
-                                                <div style={{ fontSize: "14px", fontWeight: 800, color: "#93c5fd", lineHeight: "10" }}>L: {scaleTemp(lowest)}</div>
+                                            <div style={{ textAlign: "right", display: "flex", flexDirection: "row", gap: "4px" }}>
+                                                <div style={{ fontSize: "14px", fontWeight: 800, color: "#93c5fd", lineHeight: "1.4" }}>L: {scaleTemp(lowest)}</div>
+                                                <div style={{ fontSize: "14px", fontWeight: 800, color: "#fca5a5", lineHeight: "1.4" }}>H: {scaleTemp(highest)}</div>
                                             </div>
                                         </div>
 
