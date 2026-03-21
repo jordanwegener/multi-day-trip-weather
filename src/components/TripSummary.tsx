@@ -120,19 +120,19 @@ const TripSummary = ({ forecast }: TripSummaryProps) => {
                     width: "800px",
                 }
             });
-            
+
             if (newTab) {
                 const body = newTab.document.body;
                 body.innerHTML = "";
-                
+
                 const container = newTab.document.createElement('div');
                 container.style.cssText = "display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 40px; box-sizing: border-box;";
-                
+
                 const img = newTab.document.createElement('img');
                 img.src = dataUrl;
                 img.style.cssText = "max-width: 100%; height: auto; border-radius: 16px; box-shadow: 0 30px 60px rgba(0,0,0,0.4); opacity: 0; transition: opacity 0.5s ease;";
                 img.onload = () => { img.style.opacity = "1"; };
-                
+
                 const tip = newTab.document.createElement('p');
                 tip.innerText = "Right click to save image";
                 tip.style.cssText = "margin-top: 20px; font-size: 14px; opacity: 0.4;";
@@ -240,8 +240,8 @@ const TripSummary = ({ forecast }: TripSummaryProps) => {
 
             {/* Hidden Export Layout - kept off-screen but active for rendering */}
             <div style={{ position: 'fixed', left: '-10000px', top: '0', pointerEvents: 'none', zIndex: -9999 }}>
-                <div ref={fullExportRef} style={{ 
-                    width: "800px", 
+                <div ref={fullExportRef} style={{
+                    width: "800px",
                     backgroundColor: colorMode === "dark" ? "#0f172a" : "#ffffff",
                     color: colorMode === "dark" ? "#f8fafc" : "#0f172a",
                     padding: "32px",
@@ -290,11 +290,11 @@ const TripSummary = ({ forecast }: TripSummaryProps) => {
                                 const highest = Math.max(...validForecasts.map(f => f.tempMax));
                                 const lowest = Math.min(...validForecasts.map(f => f.tempMin));
                                 const weatherCodes = Array.from(new Set(validForecasts.map(f => f.weathercode)));
-                                
+
                                 return (
-                                    <div key={d.id} style={{ 
-                                        padding: "16px", 
-                                        borderRadius: "12px", 
+                                    <div key={d.id} style={{
+                                        padding: "16px",
+                                        borderRadius: "12px",
                                         backgroundColor: colorMode === "dark" ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.02)",
                                         border: "1px solid rgba(128,128,128,0.1)"
                                     }}>
@@ -305,12 +305,12 @@ const TripSummary = ({ forecast }: TripSummaryProps) => {
                                                     {dayjs(d.fromDate).format("MMM D")} - {dayjs(d.toDate).format("MMM D")}
                                                 </div>
                                             </div>
-                                            <div style={{ textAlign: "right", display: "flex", flexDirection: "column", gap: "2px" }}>
-                                                <div style={{ fontSize: "14px", fontWeight: 800, color: "#fca5a5", lineHeight: 1 }}>H: {scaleTemp(highest)}</div>
-                                                <div style={{ fontSize: "14px", fontWeight: 800, color: "#93c5fd", lineHeight: 1 }}>L: {scaleTemp(lowest)}</div>
+                                            <div style={{ textAlign: "right", display: "flex", flexDirection: "column", gap: "4px" }}>
+                                                <div style={{ fontSize: "14px", fontWeight: 800, color: "#fca5a5", lineHeight: "10" }}>H: {scaleTemp(highest)}</div>
+                                                <div style={{ fontSize: "14px", fontWeight: 800, color: "#93c5fd", lineHeight: "10" }}>L: {scaleTemp(lowest)}</div>
                                             </div>
                                         </div>
-                                        
+
                                         <div style={{ flex: 1 }}>
                                             <div style={{ fontSize: "12px", fontWeight: 700, marginBottom: "4px", opacity: 0.8 }}>
                                                 Weather Summary
