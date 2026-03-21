@@ -67,67 +67,94 @@ const TripSummary = ({ forecast }: TripSummaryProps) => {
     const handleOpenImage = async () => {
         if (!fullExportRef.current) return;
 
+        // Open the window immediately within the user-click event thread
+        const newTab = window.open("", "_blank");
+        if (!newTab) return;
+
+        newTab.document.write(`
+            <!DOCTYPE html>
+            <html>
+                <head>
+                    <title>TripCast | Generating...</title>
+                    <style>
+                        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+                        .spinner {
+                            width: 40px;
+                            height: 40px;
+                            border: 4px solid ${colorMode === "dark" ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"};
+                            border-top: 4px solid #6366f1;
+                            border-radius: 50%;
+                            animation: spin 1s linear infinite;
+                            margin: 0 auto 20px;
+                        }
+                    </style>
+                </head>
+                <body style="margin: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; background-color: ${colorMode === "dark" ? "#0f172a" : "#f1f5f9"}; font-family: sans-serif; color: ${colorMode === "dark" ? "#ffffff" : "#0f172a"}; text-align: center;">
+                    <div id="loader">
+                        <div class="spinner"></div>
+                        <p id="status-msg" style="font-size: 1.1rem; font-weight: 500; margin-bottom: 0.5rem; opacity: 0.8;">Generating your summary image...</p>
+                        <p style="font-size: 0.8rem; opacity: 0.5;">This will take just a moment</p>
+                    </div>
+                    <script>
+                        const msg = document.getElementById('status-msg');
+                        setTimeout(() => { if(msg) msg.innerText = 'Almost there, perfecting the layout...'; }, 3000);
+                        setTimeout(() => { if(msg) msg.innerText = 'Still working, ensuring high quality...'; }, 6000);
+                    </script>
+                </body>
+            </html>
+        `);
+
         try {
+            // Small delay to ensure any deferred paints are ready
+            await new Promise(r => setTimeout(r, 200));
+
             const dataUrl = await toPng(fullExportRef.current, {
-                backgroundColor: "transparent",
+                backgroundColor: colorMode === "dark" ? "#0f172a" : "#ffffff",
+                quality: 1,
+                pixelRatio: 2,
+                cacheBust: true,
                 style: {
-                    borderRadius: "16px",
-                    background: colorMode === "dark" 
-                        ? "#0f172a" 
-                        : "#ffffff",
+                    margin: "0",
                     padding: "24px",
-                    width: "800px", // Fixed width for better export consistency
+                    width: "800px",
                 }
             });
             
-            const newTab = window.open();
             if (newTab) {
-                newTab.document.write(`
-                    <html>
-                        <head>
-                            <title>${currentTripName || "Trip Summary"}</title>
-                            <style>
-                                body { 
-                                    margin: 0; 
-                                    display: flex; 
-                                    justify-content: center; 
-                                    align-items: center; 
-                                    min-height: 100vh; 
-                                    padding: 20px;
-                                    background-color: ${colorMode === "dark" ? "#0f172a" : "#f1f5f9"}; 
-                                    font-family: sans-serif;
-                                }
-                                img { 
-                                    max-width: 100%; 
-                                    height: auto; 
-                                    border-radius: 12px; 
-                                    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-                                }
-                                .controls {
-                                    position: fixed;
-                                    top: 10px;
-                                    right: 10px;
-                                    color: ${colorMode === "dark" ? "#ffffff" : "#000000"};
-                                    background: rgba(128,128,128,0.2);
-                                    padding: 5px 10px;
-                                    border-radius: 5px;
-                                    font-size: 12px;
-                                }
-                            </style>
-                        </head>
-                        <body>
-                            <div class="controls">Generated Image - Right click to save</div>
-                            <img src="${dataUrl}" alt="Trip Summary" />
-                        </body>
-                    </html>
-                `);
-                newTab.document.close();
+                const body = newTab.document.body;
+                body.innerHTML = "";
+                
+                const container = newTab.document.createElement('div');
+                container.style.cssText = "display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 40px; box-sizing: border-box;";
+                
+                const img = newTab.document.createElement('img');
+                img.src = dataUrl;
+                img.style.cssText = "max-width: 100%; height: auto; border-radius: 16px; box-shadow: 0 30px 60px rgba(0,0,0,0.4); opacity: 0; transition: opacity 0.5s ease;";
+                img.onload = () => { img.style.opacity = "1"; };
+                
+                const tip = newTab.document.createElement('p');
+                tip.innerText = "Right click to save image";
+                tip.style.cssText = "margin-top: 20px; font-size: 14px; opacity: 0.4;";
+
+                container.appendChild(img);
+                container.appendChild(tip);
+                body.appendChild(container);
+                newTab.document.title = `${currentTripName || "Trip Summary"} | TripCast`;
             }
 
             setCopyStatus("image");
             setTimeout(() => setCopyStatus("none"), 2000);
         } catch (err) {
-            console.error("Failed to open image: ", err);
+            console.error("Image generation failed:", err);
+            if (newTab) {
+                newTab.document.body.innerHTML = `
+                    <div style="text-align: center; padding: 40px; font-family: sans-serif;">
+                        <h3 style="color: #ef4444;">Generation Failed</h3>
+                        <p style="opacity: 0.7;">${err instanceof Error ? err.message : "The browser blocked image generation."}</p>
+                        <button onclick="window.close()" style="margin-top: 20px; padding: 10px 20px; border-radius: 8px; border: none; background: #6366f1; color: white; cursor: pointer;">Close Tab</button>
+                    </div>
+                `;
+            }
         }
     };
 
@@ -210,8 +237,8 @@ const TripSummary = ({ forecast }: TripSummaryProps) => {
                 </Box>
             </Stack>
 
-            {/* Hidden Export Layout */}
-            <Box style={{ position: 'absolute', top: '-10000px', left: '-10000px' }}>
+            {/* Hidden Export Layout - kept off-screen but active for rendering */}
+            <Box style={{ position: 'fixed', left: '-10000px', top: '0', pointerEvents: 'none', zIndex: -9999 }}>
                 <Box ref={fullExportRef} sx={{ 
                     width: "800px", 
                     bgcolor: colorMode === "dark" ? "#0f172a" : "#ffffff",
