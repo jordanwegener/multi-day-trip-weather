@@ -230,7 +230,7 @@ const TripSummary = ({ forecast }: TripSummaryProps) => {
                 <Box sx={{ textAlign: "center", flex: 1 }}>
                     <Stack direction="row" alignItems="center" justifyContent="center" spacing={1}>
                         <Umbrella sx={{ color: "#7dd3fc" }} />
-                        <Typography variant="body2" color="text.secondary">Precipitation</Typography>
+                        <Typography variant="body2" color="text.secondary">Precipitation Days</Typography>
                     </Stack>
                     <Typography variant="h4" sx={{ fontWeight: 800, color: "#7dd3fc" }}>
                         {stats.precipDates.size}
