@@ -1,67 +1,56 @@
-# multi-day-trip-weather
-an app to provide weather forecasts for each destination in a multi-day trip
+# TripCast 🌦️
+### Tracking the sun (or lack thereof) across your entire route.
 
-Introduction
-------------
+**TripCast** is a modern, high-performance weather planning tool designed for travelers who need more than a single-city forecast. Whether you're planning a week-long road trip, a multi-stop tour, or a hiking expedition with various base camps, TripCast provides a unified weather summary for every leg of your journey.
 
-The Journey Weather Forecast App aims to provide travelers with accurate and timely weather forecasts for each node or location along their journey. By integrating weather data with the traveler's itinerary, the app will assist users in planning their activities and making informed decisions based on weather conditions.
+![TripCast Logo](./public/logo.png)
 
-Problem Statement
------------------
+## ✨ Features
 
-Travelers often face challenges when it comes to obtaining reliable weather information for specific locations and times during their journey. Existing weather apps primarily provide forecasts for fixed locations, making it difficult for travelers to plan according to the weather at each node along their route.
+- **Multi-Destination Itinerary**: Add as many stops as you need. Set individual dates for each location to see exactly what the weather will be like when you arrive.
+- **High-Resolution Export**: Generate a beautiful, high-quality PNG summary of your entire trip's weather highlights. Optimized for sharing on social media or messaging apps.
+- **Detailed Precipitation Tracking**: Beyond just "rain," TripCast tracks all forms of precipitation including snow, hail, and drizzle, showing you a "Precipitation Days" tally for your whole trip.
+- **Premium Glassmorphism UI**: A sleek, modern interface with full Dark Mode and Light Mode support, featuring vibrant indigo and purple gradients.
+- **Dynamic Charting**: Visualize temperature trends across your trip to help you pack correctly.
+- **Smart Temperature Scaling**: Toggle between Celsius and Fahrenheit instantly across the entire application.
 
-Goals and Objectives
---------------------
+## 🚀 Tech Stack
 
-*   Develop an app that offers accurate and localized weather forecasts for each node on a traveler's journey.
-*   Enable users to create and manage their itineraries within the app, including adding locations and corresponding timeframes.
-*   Integrate with reliable weather data sources to ensure up-to-date and precise forecasts.
-*   Provide a user-friendly interface that is intuitive and easy to navigate.
-*   Enhance user experience by delivering personalized and relevant weather alerts and notifications.
+- **Core**: React 18 & TypeScript
+- **Styling**: Material UI 5 with custom Glassmorphism components
+- **State Management**: Zustand (for lightweight, performant state)
+- **Data Source**: [Open-Meteo API](https://open-meteo.com/) (Free, high-accuracy weather data)
+- **Exports**: `html-to-image` with custom cross-browser optimizations for Firefox and Safari support.
+- **Date Handling**: Day.js
 
-User Stories
-------------
+## 🛠️ Getting Started
 
-1.  As a traveler, I want to input my journey details, including destinations and dates, to receive weather forecasts for each location at the corresponding time.
-2.  As a user, I want the app to provide real-time updates on weather conditions, ensuring I am well-informed during my journey.
-3.  As a traveler, I want the ability to view weather forecasts in different formats (e.g., hourly, daily) to better plan my activities.
-4.  As a user, I want the app to display additional weather-related information, such as temperature, precipitation, wind speed, and UV index.
-5.  As a traveler, I want the option to receive notifications or alerts regarding severe weather conditions that may impact my journey.
+### Prerequisites
+- Node.js (v16 or higher recommended)
+- npm or yarn
 
-Technical Requirements
-----------------------
+### Installation
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/jordanwegener/multi-day-trip-weather.git
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the development server:
+   ```bash
+   npm start
+   ```
 
-*   Integrate with reliable weather data APIs to retrieve accurate and up-to-date forecasts.
-*   Implement geolocation functionality to identify the traveler's current location and provide weather information accordingly.
-*   Develop a user-friendly interface with intuitive design and smooth navigation.
-*   Ensure compatibility with both iOS and Android platforms.
+## 📸 Exporting Your Trip
+TripCast features a custom-built image generation engine. When you click **"Open as Image"** in the Highlights section:
+1. A new tab opens immediately with a loading spinner.
+2. The app renders a high-resolution snapshot of your summary.
+3. You can right-click the final image to save it or copy it directly.
 
-Benefits
---------
+## 📝 License
+This project is open-source. Feel free to use it for your own travel planning!
 
-*   Empowers travelers to make informed decisions based on localized weather forecasts during their journey.
-*   Enhances travel planning by considering weather conditions at specific locations and times.
-*   Reduces the risk of unexpected weather-related disruptions or inconveniences.
-*   Provides a seamless and personalized user experience tailored to individual itineraries.
-
-KPIs (Key Performance Indicators)
----------------------------------
-
-*   Number of active users and app downloads.
-*   User engagement metrics (e.g., daily active users, time spent in-app).
-*   User satisfaction ratings and feedback.
-*   Accuracy of weather forecasts compared to actual conditions.
-
-Development Risks
------------------
-
-*   Integration challenges with weather data APIs and ensuring reliable data sources.
-*   Technical complexities associated with geolocation functionality and itinerary management.
-*   Maintaining app performance and responsiveness while handling data updates in real-time.
-*   Ensuring a smooth user experience across different devices and platforms.
-
-Conclusion
-----------
-
-The Journey Weather Forecast App aims to address the need for localized and timely weather information during travel. By providing accurate forecasts for each node on a journey, the app empowers travelers to plan their activities efficiently and make informed decisions based on weather conditions. With a user-friendly interface and seamless integration with reliable weather data sources, the app aims to enhance the overall travel experience and reduce weather-related disruptions.
+---
+*Generated by TripCast - helping you realize you packed the wrong jacket for stop 3.*
